@@ -1,0 +1,8 @@
+name: ShiftFly
+version: 1.0.0
+author: mn7cc
+main: me.mn7cc.shiftfly.ShiftFly
+
+commands:
+  shiftfly:
+    aliases: [sf]
