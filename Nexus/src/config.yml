@@ -1,0 +1,28 @@
+# Shift Fly Config
+
+
+# If you don't use MySQL userdata will be stored at plugins/Shift-Fly/database.db
+
+mysql:
+    enable: false
+    hostname: localhost
+    port: 3306
+    username: root
+    password: password
+    database: minecraft
+
+    
+# Self explanatory. Recommended to not change these values since you might face issues while flying.
+
+min-fly-speed: 1
+max-fly-speed: 5
+
+# Only players with the shiftfly.bypass permission will be able to fly in these worlds.
+
+disabled-worlds:
+  - world_no_1
+  - another_world
+
+
+# Please report issues and suggestions directly to Shift Fly's GitHub Repository found at:
+# https://github.com/envy7cc/shift-fly

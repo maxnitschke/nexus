@@ -8,6 +8,10 @@
   		<id>spigot-repo</id>
   		<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
   	</repository>
+  	<repository>
+		<id>jitpack.io</id>
+		<url>https://jitpack.io</url>
+	</repository>
   </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -48,12 +52,6 @@
   </build>
   <dependencies>
   	<dependency>
-  	    <groupId>org.spigotmc</groupId>
-  		<artifactId>spigot-api</artifactId>
-  		<version>1.14.4-R0.1-SNAPSHOT</version>
-  		<scope>provided</scope>
-  	</dependency>
-  	<dependency>
         <groupId>com.zaxxer</groupId>
         <artifactId>HikariCP</artifactId>
         <version>3.4.1</version>
@@ -65,5 +63,18 @@
 	    <version>1.7.28</version>
 	    <scope>compile</scope>
 	</dependency>
+	<dependency>
+	    <groupId>org.spigotmc</groupId>
+	    <artifactId>spigot</artifactId>
+	    <version>1.14.4</version>
+	    <scope>system</scope>
+	    <systemPath>D:\Eclipse\Other .jar files\spigot-1.14.4.jar</systemPath>
+	</dependency>
+	<dependency>
+        <groupId>com.github.MilkBowl</groupId>
+        <artifactId>VaultAPI</artifactId>
+        <version>1.7</version>
+        <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>
