@@ -1,0 +1,12 @@
+# Nexus ~ Modules
+#
+# > In case you need any further information on certain
+# > configuration options, feel free to have a loot at:
+# > https://github.com/mn7cc/nexus/wiki/modules.yml
+
+modules:
+    teleportation:
+        enable: true
+        settings:
+            teleport-request-timeout: 2m
+            teleport-delay: 0s

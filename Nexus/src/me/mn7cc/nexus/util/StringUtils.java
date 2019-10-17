@@ -1,10 +1,13 @@
 package me.mn7cc.nexus.util;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class StringUtils {
@@ -123,6 +126,12 @@ public class StringUtils {
 		
 		return "Unknown";
 		
+	}
+	
+	public static String toString(List<Player> players) {
+		List<String> names = new ArrayList<String>();
+		for(Player player : players) names.add(player.getName());
+		return StringUtils.replaceLast(String.join(", ", names), ", ", " and ");
 	}
 	
 	public static String toAmountString(double amount) {

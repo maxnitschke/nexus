@@ -1,6 +1,7 @@
 package me.mn7cc.nexus.custom;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.command.CommandSender;
@@ -47,10 +48,11 @@ public class CommandContent {
 		boolean reachedOptional = false;
 		boolean reachedAcceptsRemaining = false;
 		int lastIndex = 0;
+		int invalidOptionals = 0;
 		
 		for(Entry<Integer, Argument> entry : this.arguments.entrySet()) {
 			
-			int index = entry.getKey();
+			int index = entry.getKey() - invalidOptionals;
 			Argument argument = entry.getValue();
 			if(index > lastIndex) lastIndex = index;
 			
@@ -69,8 +71,20 @@ public class CommandContent {
 				argument.setGivenArgument(argument.getRequiredType().doesAcceptRemainingArguments() ? StringUtils.combineArguments(index, args) : args[index]);
 			
 			}
-			catch (NexusCommandException e) { throw e; }
-			catch (InvalidCommandModelException e) { throw e; }
+			catch (NexusCommandException e) {
+				if(argument.isOptional()) {
+					invalidOptionals++;
+					continue;
+				}
+				throw e;
+			}
+			catch (InvalidCommandModelException e) {
+				if(argument.isOptional()) {
+					invalidOptionals++;
+					continue;
+				}
+				throw e;
+			}
 			
 		}
 		
@@ -78,10 +92,10 @@ public class CommandContent {
 		
 	}
 	
-	public String getString(int index) { return arguments.containsKey(index) && arguments.get(index).getData() != null && arguments.get(index).getData() instanceof String ? (String) arguments.get(index).getData() : null; }
-	public double getDouble(int index) { return arguments.containsKey(index) && arguments.get(index).getData() != null && arguments.get(index).getData() instanceof Double ? (double) arguments.get(index).getData() : null; }
-	public int getInteger(int index) { return arguments.containsKey(index) && arguments.get(index).getData() != null && arguments.get(index).getData() instanceof Integer ? (int) arguments.get(index).getData() : null; }
-	public Player getPlayer(int index) { return arguments.containsKey(index) && arguments.get(index).getData() != null && arguments.get(index).getData() instanceof Player ? (Player) arguments.get(index).getData() : null; }
-
+	public String getString(int index) { return arguments.containsKey(index) ? arguments.get(index).getString() : null; }
+	public double getDouble(int index) { return arguments.containsKey(index) ? arguments.get(index).getDouble() : null; }
+	public int getInteger(int index) { return arguments.containsKey(index) ? arguments.get(index).getInteger() : null; }
+	public Player getPlayer(int index) { return arguments.containsKey(index) ? arguments.get(index).getPlayer() : null; }
+	public List<Player> getPlayers(int index) { return arguments.containsKey(index) ? arguments.get(index).getPlayers() : null; }
 
 }

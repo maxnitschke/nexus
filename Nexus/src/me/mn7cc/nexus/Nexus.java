@@ -34,8 +34,8 @@ public class Nexus extends JavaPlugin {
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerKickListener(), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
 		
-//		Database.setup();
-//		Database.load();
+		Database.setup();
+		Database.load();
 		
 //    	Bukkit.getServer().getScheduler().runTaskTimer(this, new DatabaseHeartbeatTask(), 5L, 5L);
 		
@@ -44,9 +44,9 @@ public class Nexus extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		
-//		if(!Database.isClosed()) Database.heartbeat();
+		if(!Database.isClosed()) Database.heartbeat();
 		
-//		Database.close();
+		Database.close();
 		
 	}
     

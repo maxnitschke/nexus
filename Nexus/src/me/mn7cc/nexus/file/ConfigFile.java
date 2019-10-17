@@ -1,9 +1,7 @@
 package me.mn7cc.nexus.file;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class ConfigFile extends BaseFile {
 	
@@ -23,28 +21,22 @@ public class ConfigFile extends BaseFile {
 		
 		LinkedHashMap<String, Object> defaults = new LinkedHashMap<String, Object>();
 		
-		defaults.put("mysql.enable", false);
-		defaults.put("mysql.hostname", "localhost");
-		defaults.put("mysql.database", "minecraft");
-		defaults.put("mysql.port", 3306);
-		defaults.put("mysql.username", "root");
-		defaults.put("mysql.password", "password");
-		defaults.put("min-fly-speed", 1);
-		defaults.put("max-fly-speed", 5);
-		defaults.put("disabled-worlds", Arrays.asList("world_no_1", "another_world"));
+		defaults.put("config.mysql.enable", false);
+		defaults.put("config.mysql.hostname", "localhost");
+		defaults.put("config.mysql.database", "minecraft");
+		defaults.put("config.mysql.port", 3306);
+		defaults.put("config.mysql.username", "root");
+		defaults.put("config.mysql.password", "password");
 		
 		return defaults;
 		
 	}
 	
-	public boolean isUsingMySQL() { return getBooleanValue("mysql.enable"); }
-	public String getMySQLHostname() { return getStringValue("mysql.hostname"); }
-	public String getMySQLDatabase() { return getStringValue("mysql.database"); }
-	public int getMySQLPort() { return getIntegerValue("mysql.port"); }
-	public String getMySQLUsername() { return getStringValue("mysql.username"); }
-	public String getMySQLPassword() { return getStringValue("mysql.password"); }
-	public double getMinFlySpeed() { return getIntegerValue("min-fly-speed"); }
-	public double getMaxFlySpeed() { return getIntegerValue("max-fly-speed"); }
-	public List<String> getDisabledWorlds() { return getStringListValue("disabled-worlds"); }
+	public boolean isUsingMySQL() { return getBooleanValue("config.mysql.enable"); }
+	public String getMySQLHostname() { return getStringValue("config.mysql.hostname"); }
+	public String getMySQLDatabase() { return getStringValue("config.mysql.database"); }
+	public int getMySQLPort() { return getIntegerValue("config.mysql.port"); }
+	public String getMySQLUsername() { return getStringValue("config.mysql.username"); }
+	public String getMySQLPassword() { return getStringValue("config.mysql.password"); }
 	
 }

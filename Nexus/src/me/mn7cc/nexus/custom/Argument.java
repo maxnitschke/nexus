@@ -1,5 +1,10 @@
 package me.mn7cc.nexus.custom;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.exception.NexusCommandException;
@@ -8,7 +13,7 @@ import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.ServerUtils;
 import me.mn7cc.nexus.util.StringUtils;
 
-public class Argument {
+public class Argument extends ArgumentData {
 
 	public enum Type {
 
@@ -17,6 +22,7 @@ public class Argument {
 		INTEGER(false),
 		DOUBLE(false),
 		PLAYER(false),
+		PLAYERS(false),
 		NEXUS_PLAYER(false),
 		NEXUS_HOME(false),
 		NEXUS_WARP(false);
@@ -36,9 +42,9 @@ public class Argument {
 	private String givenArgument;
 	private Type requiredType;
 	private boolean optional;
-	private Object data;
 	
 	public Argument(int index, String label, Type requiredType) {
+		super();
 		this.index = index;
 		this.label = label;
 		this.requiredType = requiredType;
@@ -46,6 +52,7 @@ public class Argument {
 	}
 	
 	public Argument(int index, String label, Type requiredType, boolean optional) {
+		super();
 		this.index = index;
 		this.label = label;
 		this.requiredType = requiredType;
@@ -58,21 +65,21 @@ public class Argument {
 		
 		if(requiredType == Type.STRING || requiredType == Type.STRING_REMAINING) {
 			
-			setData(givenArgument);
+			setString(givenArgument);
 			return;
 			
 		}
 		else if(requiredType == Type.DOUBLE) {
 			
 			if(!StringUtils.isDouble(givenArgument)) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER, label));
-			setData(StringUtils.parseDouble(givenArgument));
+			setDouble(StringUtils.parseDouble(givenArgument));
 			return;
 			
 		}
 		else if(requiredType == Type.INTEGER) {
 			
 			if(!StringUtils.isInteger(givenArgument)) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER, label));
-			setData(StringUtils.parseInteger(givenArgument));
+			setInteger(StringUtils.parseInteger(givenArgument));
 			return;
 			
 		}
@@ -80,7 +87,31 @@ public class Argument {
 			
 			Player player = ServerUtils.getPlayer(givenArgument);
 			if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
-			setData(player);
+			setPlayer(player);
+			return;
+			
+		}
+		else if(requiredType == Type.PLAYERS) {
+			
+			List<Player> players = new ArrayList<Player>();
+			
+			if(givenArgument.equals("*")) {
+				players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+			}
+			else if(givenArgument.contains(",")) {
+				for(String name : givenArgument.split(",")) {
+					Player player = ServerUtils.getPlayer(name);
+					if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+					if(!players.contains(player)) players.add(player);
+				}
+			}
+			else {
+				Player player = ServerUtils.getPlayer(givenArgument);
+				if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+				players.add(player);
+			}
+			
+			setPlayers(players);
 			return;
 			
 		}
@@ -89,20 +120,12 @@ public class Argument {
 		
 	}
 	
-	public void setData(Object data) { this.data = data; }
-	
 	public int getIndex() { return index; }
 	public String getLabel() { return label; }
 	public Type getRequiredType() { return requiredType; }
-	public Object getData() { return data; }
 	
 	public boolean isOptional() { return optional; }
 	
 	public ArgumentModel getModel() { return new ArgumentModel(index, label, requiredType, optional); }
-	
-	public String getString() { return data != null && data instanceof String ? (String) data : null; }
-	public double getDouble() { return data != null && data instanceof Double ? (double) data : null; }
-	public int getInteger() { return data != null && data instanceof Integer ? (int) data : null; }
-	public Player getPlayer() { return data != null && data instanceof Player ? (Player) data : null; }
 	
 }
