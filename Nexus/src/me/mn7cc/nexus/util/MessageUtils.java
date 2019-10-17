@@ -47,7 +47,7 @@ public class MessageUtils {
 	
 	public static void loadMessages() {
 		
-		MessagesFile messages = FileManager.getMessages();
+		MessagesFile messages = FileManager.getMessagesFile();
 		for(Entry<String, String> entry : messages.getMessages().entrySet()) addMessage(entry.getKey(), entry.getValue());
 		
 	}

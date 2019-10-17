@@ -2,7 +2,6 @@ package me.mn7cc.nexus.file;
 
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class ModulesFile extends BaseFile {
 	
@@ -29,6 +28,8 @@ public class ModulesFile extends BaseFile {
 		return defaults;
 		
 	}
+	
+	public boolean isEnabled(String module) { return getBooleanValue("modules." + module + ".enable"); }
 	
 	public int getTeleportRequestTimout() { return getIntegerValue("modules.teleportation.settings.teleport-request-timeout"); }
 	public int getTeleportDelay() { return getIntegerValue("modules.teleportation.settings.teleport-delay"); }

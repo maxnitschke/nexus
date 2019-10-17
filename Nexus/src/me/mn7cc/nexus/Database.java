@@ -31,7 +31,7 @@ public class Database {
 
 		try {
 			
-			ConfigFile config = FileManager.getConfig();
+			ConfigFile config = FileManager.getConfigFile();
 			
 			if(config.isUsingMySQL()) {
 				

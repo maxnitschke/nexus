@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.mn7cc.nexus.custom.CommandManager;
 import me.mn7cc.nexus.custom.FileManager;
 import me.mn7cc.nexus.custom.ModuleManager;
+import me.mn7cc.nexus.listener.AsyncPlayerChatListener;
 import me.mn7cc.nexus.listener.PlayerKickListener;
 import me.mn7cc.nexus.listener.PlayerQuitListener;
 import me.mn7cc.nexus.util.MessageUtils;
@@ -28,9 +29,9 @@ public class Nexus extends JavaPlugin {
 		VaultUtils.setupVault();
 		
 		CommandManager.loadCommands();
-		
 		ModuleManager.loadModules();
 		
+		Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerKickListener(), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
 		

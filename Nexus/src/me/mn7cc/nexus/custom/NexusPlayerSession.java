@@ -15,5 +15,9 @@ public class NexusPlayerSession {
 	}
 	
 	public Player getPlayer() { return player; }
+	
+	public void addTPARequest() {
+		
+	}
 
 }

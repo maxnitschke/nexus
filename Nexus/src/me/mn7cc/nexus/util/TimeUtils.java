@@ -1,6 +1,8 @@
 package me.mn7cc.nexus.util;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.mn7cc.nexus.exception.InvalidTimeFormatException;
 
@@ -101,32 +103,40 @@ public class TimeUtils {
 	
 	public static double parseTime(String time) throws InvalidTimeFormatException {
 		
-		time = time.toLowerCase();
+		Pattern pattern = Pattern.compile("([0-9]+y)|([0-9]+mo)|([0-9]+w)|([0-9]+d)|([0-9]+h)|([0-9]+m)|([0-9]+s)", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(time);
+
+		int years = 0;
+		int months = 0;
+		int weeks = 0;
+		int days = 0;
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+		
+		while(matcher.find()) {
+			
+			if(matcher.group(1) != null && years == 0) years = StringUtils.parseInteger(matcher.group(1).replaceAll("\\D+", ""));
+			if(matcher.group(2) != null && months == 0) months = StringUtils.parseInteger(matcher.group(2).replaceAll("\\D+", ""));
+			if(matcher.group(3) != null && weeks == 0) weeks = StringUtils.parseInteger(matcher.group(3).replaceAll("\\D+", ""));
+			if(matcher.group(4) != null && days == 0) days = StringUtils.parseInteger(matcher.group(4).replaceAll("\\D+", ""));
+			if(matcher.group(5) != null && hours == 0) hours = StringUtils.parseInteger(matcher.group(5).replaceAll("\\D+", ""));
+			if(matcher.group(6) != null && minutes == 0) minutes = StringUtils.parseInteger(matcher.group(6).replaceAll("\\D+", ""));
+			if(matcher.group(7) != null && seconds == 0) seconds = StringUtils.parseInteger(matcher.group(7).replaceAll("\\D+", ""));
+			
+		}
 		
 		double milliseconds = 0;
 		
-		StringBuilder currentTime = new StringBuilder();
+		milliseconds += years * 1000 * 60 * 60 * 24 * 365;
+		milliseconds += months * 1000 * 60 * 60 * 24 * 30;
+		milliseconds += weeks * 1000 * 60 * 60 * 24 * 7;
+		milliseconds += days * 1000 * 60 * 60 * 24;
+		milliseconds += hours * 1000 * 60 * 60;
+		milliseconds += minutes * 1000 * 60;
+		milliseconds += seconds * 1000;
 		
-		for(int i = 0; i < time.length(); i++) {
-			String c = Character.toString(time.charAt(i));
-			if(c.matches("[0-9]")) currentTime.append(c);
-			else {
-				
-				if(!StringUtils.isInteger(currentTime.toString())) throw new InvalidTimeFormatException();
-				int duration = StringUtils.parseInteger(currentTime.toString());
-				if(duration <= 0) throw new InvalidTimeFormatException();
-				
-				if(c.equals("s")) milliseconds += duration * 1000;
-				else if(c.equals("m")) milliseconds += duration * 1000 * 60;
-				else if(c.equals("h")) milliseconds += duration * 1000 * 60 * 60;
-				else if(c.equals("d")) milliseconds += duration * 1000 * 60 * 60 * 24;
-				else throw new InvalidTimeFormatException();
-				
-				currentTime.setLength(0);
-				
-			}
-		}
-		
+		if(milliseconds == 0) throw new InvalidTimeFormatException();
 		return milliseconds;
 		
 	}

@@ -9,15 +9,18 @@ import java.io.OutputStream;
 import me.mn7cc.nexus.Nexus;
 import me.mn7cc.nexus.file.ConfigFile;
 import me.mn7cc.nexus.file.MessagesFile;
+import me.mn7cc.nexus.file.ModulesFile;
 
 public class FileManager {
 	
 	private static ConfigFile config;
+	private static ModulesFile modules;
 	private static MessagesFile messages;
 	
 	public static void loadFiles() {
 		
 		config = new ConfigFile();
+		modules = new ModulesFile();
 		messages = new MessagesFile();
 		
 	}
@@ -25,12 +28,14 @@ public class FileManager {
 	public static void reloadFiles() {
 		
 		config.reloadData();
+		modules.reloadData();
 		messages.reloadData();
 		
 	}
 	
-	public static ConfigFile getConfig() { return config; }
-	public static MessagesFile getMessages() { return messages; }
+	public static ConfigFile getConfigFile() { return config; }
+	public static ModulesFile getModulesFile() { return modules; }
+	public static MessagesFile getMessagesFile() { return messages; }
 	
 	public static void copyFile(String resource, File file) {
 		
