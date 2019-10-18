@@ -117,5 +117,28 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 		}
 
 	}
+	
+	public static class CommandTPA extends CommandModel implements INexusCommand {
+		
+		public CommandTPA() {
+			super(true, "nexus.tpa", "/tpa <player>",
+			new ArgumentModel(0, "<player>", Argument.Type.PLAYER));
+		}
+
+		@Override
+		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
+			
+			Player source = (Player) sender;
+			Player player = content.getPlayer(0);
+
+			MessageUtils.send(source, Message.TELEPORT_REQUEST_SENT, player.getName());
+//			for(Player player : players) {
+//				player.teleport(source);
+//				MessageUtils.send(player, Message.TELEPORT_SOURCE, source.getName());
+//			}
+			
+		}
+
+	}
 
 }
