@@ -11,11 +11,14 @@ import org.bukkit.plugin.Plugin;
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
+import me.mn7cc.nexus.exception.InvalidTimeFormatException;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.StringUtils;
+import me.mn7cc.nexus.util.TimeUtils;
 import me.mn7cc.nexus.custom.CommandContent;
 import me.mn7cc.nexus.custom.CommandManager;
 import me.mn7cc.nexus.custom.CommandModel;
+import me.mn7cc.nexus.custom.FileManager;
 import me.mn7cc.nexus.custom.NexusCommandBuilder;
 import me.mn7cc.nexus.custom.INexusCommand;
 import me.mn7cc.nexus.custom.INexusModule;
@@ -23,12 +26,21 @@ import me.mn7cc.nexus.custom.Message;
 
 public class NexusTeleportationModule extends NexusModule implements INexusModule, Listener {
 	
+	private static double TELEPORT_REQUEST_TIMEOUT;
+	private static double TELEPORT_DELAY;
+	
 	public NexusTeleportationModule(boolean enabled) {
 		super(enabled);
 	}
 	
 	@Override
 	public void enableModule(Plugin plugin) {
+		
+		try {
+			TELEPORT_REQUEST_TIMEOUT = TimeUtils.parseTime(FileManager.getModulesFile().getTeleportationTeleportRequestTimeout());
+			TELEPORT_DELAY = TimeUtils.parseTime(FileManager.getModulesFile().getTeleportationTeleportDelay());
+		}
+		catch (InvalidTimeFormatException e) { e.printStackTrace(); }
 		
         CommandManager.registerCommand(
         		new NexusCommandBuilder("tp", "teleport")

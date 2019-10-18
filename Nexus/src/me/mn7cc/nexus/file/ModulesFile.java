@@ -22,8 +22,8 @@ public class ModulesFile extends BaseFile {
 		LinkedHashMap<String, Object> defaults = new LinkedHashMap<String, Object>();
 		
 		defaults.put("modules.teleportation.enable", false);
-		defaults.put("modules.teleportation.settings.teleport-request-timeout", 120);
-		defaults.put("modules.teleportation.settings.teleport-delay", 0);
+		defaults.put("modules.teleportation.settings.teleport-request-timeout", "2m");
+		defaults.put("modules.teleportation.settings.teleport-delay", "0s");
 		
 		return defaults;
 		
@@ -31,7 +31,7 @@ public class ModulesFile extends BaseFile {
 	
 	public boolean isEnabled(String module) { return getBooleanValue("modules." + module + ".enable"); }
 	
-	public int getTeleportRequestTimout() { return getIntegerValue("modules.teleportation.settings.teleport-request-timeout"); }
-	public int getTeleportDelay() { return getIntegerValue("modules.teleportation.settings.teleport-delay"); }
+	public String getTeleportationTeleportRequestTimeout() { return getStringValue("modules.teleportation.settings.teleport-request-timeout"); }
+	public String getTeleportationTeleportDelay() { return getStringValue("modules.teleportation.settings.teleport-delay"); }
 	
 }
