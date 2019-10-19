@@ -8,9 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
+import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
+import me.mn7cc.nexus.custom.NexusPlayer;
 import me.mn7cc.nexus.exception.InvalidTimeFormatException;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.StringUtils;
@@ -131,11 +133,56 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 			Player source = (Player) sender;
 			Player player = content.getPlayer(0);
 
+			if(source == player) {
+				MessageUtils.send(source, Message.TELEPORT_REQUEST_SELF);
+				return;
+			}
+			
+			NexusPlayer nexusPlayer = Database.getPlayer(player);
+			
+			if(nexusPlayer.getSession().hasTPARequest(source) || nexusPlayer.getSession().hasTPAHereRequest(source)) {
+				MessageUtils.send(source, Message.TELEPORT_REQUEST_STILL_PENDING);
+				return;
+			}
+			
+			nexusPlayer.getSession().addTPARequest(source, System.currentTimeMillis() + TELEPORT_REQUEST_TIMEOUT);
+			
 			MessageUtils.send(source, Message.TELEPORT_REQUEST_SENT, player.getName());
-//			for(Player player : players) {
-//				player.teleport(source);
-//				MessageUtils.send(player, Message.TELEPORT_SOURCE, source.getName());
-//			}
+			MessageUtils.send(player, Message.TELEPORT_REQUEST, source.getName());
+			
+		}
+
+	}
+	
+	public static class CommandTPAHere extends CommandModel implements INexusCommand {
+		
+		public CommandTPAHere() {
+			super(true, "nexus.tpahere", "/tpahere <player>",
+			new ArgumentModel(0, "<player>", Argument.Type.PLAYER));
+		}
+
+		@Override
+		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
+			
+			Player source = (Player) sender;
+			Player player = content.getPlayer(0);
+
+			if(source == player) {
+				MessageUtils.send(source, Message.TELEPORT_REQUEST_SELF);
+				return;
+			}
+			
+			NexusPlayer nexusPlayer = Database.getPlayer(player);
+			
+			if(nexusPlayer.getSession().hasTPARequest(source) || nexusPlayer.getSession().hasTPAHereRequest(source)) {
+				MessageUtils.send(source, Message.TELEPORT_REQUEST_STILL_PENDING);
+				return;
+			}
+			
+			nexusPlayer.getSession().addTPAHereRequest(source, System.currentTimeMillis() + TELEPORT_REQUEST_TIMEOUT);
+			
+			MessageUtils.send(source, Message.TELEPORT_REQUEST_SENT, player.getName());
+			MessageUtils.send(player, Message.TELEPORT_REQUEST_HERE, source.getName());
 			
 		}
 

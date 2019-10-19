@@ -2,6 +2,11 @@ package me.mn7cc.nexus.custom;
 
 public enum Message {
 	
+	CHAT_BUTTON_ACCEPT("&a[&lACCEPT&a]"),
+	CHAT_BUTTON_ACCEPT_HOVER("&aClick to accept."),
+	CHAT_BUTTON_DECLINE("&c[&lDECLINE&c]"),
+	CHAT_BUTTON_DECLINE_HOVER("&cClick to decline."),
+	CHAT_BUTTON_SPACER(" &8&l| "),
 	COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER("&4Error: &7Argument {0} requires a number!"),
 	COMMAND_ERROR_PLAYER_NOT_FOUND("&4Error: &7Player not found!"),
 	COMMAND_ERROR_REQUIRES_PLAYER_AS_SENDER("&4This command cannot be run by the console!"),
@@ -19,9 +24,9 @@ public enum Message {
 	TELEPORT_REQUEST_ACCEPTED_SOURCE("&c&l! &f{0} &7has accepted your teleport request."),
 	TELEPORT_REQUEST_DECLINED("&c&l! &7Teleport request declined."),
 	TELEPORT_REQUEST_DECLINED_SOURCE("&c&l! &f{0} &7has declined your teleport request."),
-	TELEPORT_REQUEST_HERE("&c&l! &f{0} &7has requested you to teleport to them."),
-	TELEPORT_REQUEST_INFO("&c&l! &7Accept with &f/tpaccept &7or decline with &f/tpdeny&7."),
+	TELEPORT_REQUEST_HERE("&c&l! &f{0} &7has requested that you teleport to them."),
 	TELEPORT_REQUEST_NONE("&c&l! &7No pending request found from that player."),
+	TELEPORT_REQUEST_SELF("&c&l! &7You cannot target yourself."),
 	TELEPORT_REQUEST_SENT("&c&l! &7Teleport request sent to &f{0}&7."),
 	TELEPORT_REQUEST_STILL_PENDING("&c&l! &f{0} &7already has a pending request from you."),
 	TELEPORT_SOURCE("&c&l! &7Teleported to &f{0}&7."),

@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import me.mn7cc.nexus.custom.FileManager;
 import me.mn7cc.nexus.custom.Message;
 import me.mn7cc.nexus.file.MessagesFile;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class MessageUtils {
 	
@@ -56,6 +57,10 @@ public class MessageUtils {
 		sender.sendMessage(TextUtils.color(message));
 	}
 	
+	public static void send(CommandSender sender, TextComponent textComponent) {
+		sender.spigot().sendMessage(textComponent);
+	}
+	
 	public static void send(CommandSender sender, Message message) {
 		sender.sendMessage(TextUtils.color(getMessage(message)));
 	}
@@ -66,6 +71,10 @@ public class MessageUtils {
 	
 	public static void send(Player player, String message) {
 		player.sendMessage(TextUtils.color(message));
+	}
+	
+	public static void send(Player player, TextComponent textComponent) {
+		player.spigot().sendMessage(textComponent);
 	}
 
 	public static void send(Player player, Message message) {
