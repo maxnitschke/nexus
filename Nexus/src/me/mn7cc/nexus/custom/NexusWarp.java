@@ -1,8 +1,16 @@
 package me.mn7cc.nexus.custom;
 
 import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.Encoder;
+import me.mn7cc.nexus.event.NexusWarpTeleportEvent;
 
 public class NexusWarp {
 	
@@ -14,13 +22,15 @@ public class NexusWarp {
 	private double yaw;
 	private double pitch;
 	private String owner;
+	private List<String> members;
 	private boolean priv;
 	private AccessList invited;
 	private String message;
 	
 	private PendingDatabaseUpdates pendingDatabaseUpdates;
 
-	public NexusWarp(String id, String world, double x, double y, double z, double yaw, double pitch, String owner, boolean priv, AccessList invited, String message) {
+	public NexusWarp(String id, String world, double x, double y, double z, double yaw, double pitch, String owner, List<String> members, boolean priv, AccessList invited, String message) {
+		
 		this.id = id;
 		this.world = world;
 		this.x = x;
@@ -29,9 +39,13 @@ public class NexusWarp {
 		this.yaw = yaw;
 		this.pitch = pitch;
 		this.owner = owner;
+		this.members = members;
 		this.invited = invited;
 		this.priv = priv;
 		this.message = message;
+		
+		pendingDatabaseUpdates = new PendingDatabaseUpdates();
+		
 	}
 	
 	public void setId(String id) { this.id = id; }
@@ -42,6 +56,7 @@ public class NexusWarp {
 	public void setYaw(double yaw) { this.yaw = yaw; }
 	public void setPitch(double pitch) { this.pitch = pitch; }
 	public void setOwner(String owner) { this.owner = owner; }
+	public void setMembers(List<String> members) { this.members = members; }
 	public void setPrivate(boolean priv) { this.priv = priv; }
 	public void setInvited(AccessList invited) { this.invited = invited; }
 	public void setMessage(String message) { this.message = message; }
@@ -54,24 +69,70 @@ public class NexusWarp {
 	public double getYaw() { return yaw; }
 	public double getPitch() { return pitch; }
 	public String getOwner() { return owner; }
+	public List<String> getMembers() { return members; }
 	public boolean isPrivate() { return priv; }
 	public AccessList getInvited() { return invited; }
 	public String getMessage() { return message; }
 	
+	public boolean isOwner(String uuid) {
+		return owner.equals(uuid);
+	}
 	
-//	public void insert() {
-//		Database.queue("INSERT INTO warps VALUES ('" + id + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + SerializeUtils.list(invited) + "', '" + priv + "', '" + message + "')");
-//		Database.addWarp(this);
-//	}
-//	
-//	public void update() {
-//		Database.queue("UPDATE warps SET world = '" + world + "', x = " + x + ", y = " + y + ", z = " + z + ", yaw = " + yaw + ", pitch = " + pitch + ", owner = '" + owner + "', invited = '" + SerializeUtils.list(invited) + "', private = '" + priv + "', message = '" + message + "' WHERE name = '" + name + "'");
-//		Database.addWarp(this);
-//	}
-//	
-//	public void delete() {
-//		Database.queue("DELETE FROM warps WHERE name = '" + id + "'");
-//		Database.removeWarp(id);
-//	}
+	public boolean isMember(String uuid) {
+		return members.contains(uuid);
+	}
+	
+	public boolean isInvited(Player player) {
+		return invited.hasAccess(player);
+	}
+	
+	public boolean hasMessage() {
+		return message != null && !message.isEmpty();
+	}
+	
+	public void addMember(String uuid) {
+		if(!members.contains(uuid)) members.add(uuid);
+	}
+	
+	public void removeMember(String uuid) {
+		if(members.contains(uuid)) members.remove(uuid);
+	}
+	
+	public void moveTo(Location location) {
+		this.world = location.getWorld().getUID().toString();
+		this.x = location.getX();
+		this.y = location.getY();
+		this.z = location.getZ();
+		this.yaw = location.getYaw();
+		this.pitch = location.getPitch();
+	}
+	
+	public Location getLocation() {
+		World world = Bukkit.getWorld(UUID.fromString(this.world));
+		if(world == null) return null;
+		return new Location(world, x, y, z, (float) yaw, (float) pitch);
+	}
+	
+	public void spawnPlayer(Player player) {
+		NexusWarpTeleportEvent nexusWarpTeleportEvent = new NexusWarpTeleportEvent(player, this);
+		Bukkit.getPluginManager().callEvent(nexusWarpTeleportEvent);
+		if(nexusWarpTeleportEvent.isCancelled()) return;
+		player.teleport(getLocation());
+	}
+	
+	public void insert() {
+		Database.queue("INSERT INTO " + Database.TABLE_ID_WARP + " VALUES ('" + id + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', priv, '" + Encoder.ACCESS_LIST(invited) + "', '" + message + "')");
+		Database.addWarp(this);
+	}
+	
+	public void update() {
+		Database.queue("UPDATE " + Database.TABLE_ID_WARP + " SET " + pendingDatabaseUpdates.getSQLString() + " WHERE id = '" + id + "'");
+		Database.addWarp(this);
+	}
+	
+	public void delete() {
+		Database.queue("DELETE FROM " + Database.TABLE_ID_WARP + " WHERE id = '" + id + "'");
+		Database.removeWarp(id);
+	}
 	
 }

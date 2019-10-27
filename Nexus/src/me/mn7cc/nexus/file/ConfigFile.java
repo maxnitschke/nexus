@@ -27,6 +27,7 @@ public class ConfigFile extends BaseFile {
 		defaults.put("config.mysql.port", 3306);
 		defaults.put("config.mysql.username", "root");
 		defaults.put("config.mysql.password", "password");
+		defaults.put("config.mysql.prefix", "nexus_");
 		
 		return defaults;
 		
@@ -38,5 +39,6 @@ public class ConfigFile extends BaseFile {
 	public int getMySQLPort() { return getIntegerValue("config.mysql.port"); }
 	public String getMySQLUsername() { return getStringValue("config.mysql.username"); }
 	public String getMySQLPassword() { return getStringValue("config.mysql.password"); }
+	public String getMySQLPrefix() { return getStringValue("config.mysql.prefix"); }
 	
 }

@@ -23,6 +23,9 @@ import me.mn7cc.nexus.file.ConfigFile;
 
 public class Database {
 	
+	public static final String TABLE_ID_PLAYER = FileManager.getConfigFile().getMySQLPrefix() + "player";
+	public static final String TABLE_ID_WARP = FileManager.getConfigFile().getMySQLPrefix() + "warp";
+	
 	private static HikariDataSource datasource = new HikariDataSource();
 	private static List<String> queue = new ArrayList<String>();
 	private static boolean proxy = false;
@@ -60,7 +63,7 @@ public class Database {
 			List<String> tables = new ArrayList<String>();
 			while(resultset.next()) tables.add(resultset.getString(3));
 			
-			if(!tables.contains("nexus_player")) execute("CREATE TABLE nexus_player (uuid TEXT, name TEXT, name_last TEXT, ip TEXT, nick TEXT, channel TEXT, friends TEXT, blocked TEXT, mode_god DOUBLE, mode_fly DOUBLE, mode_spy DOUBLE, mode_invisible DOUBLE, mode_teleportable DOUBLE, time_joined DOUBLE, time_online DOUBLE, time_login DOUBLE, time_logout DOUBLE, location_death TEXT, location_logout TEXT)");
+			if(!tables.contains(TABLE_ID_PLAYER)) execute("CREATE TABLE " + TABLE_ID_PLAYER + " (uuid TEXT, name TEXT, name_last TEXT, ip TEXT, nick TEXT, channel TEXT, friends TEXT, blocked TEXT, mode_god DOUBLE, mode_fly DOUBLE, mode_spy DOUBLE, mode_invisible DOUBLE, mode_teleportable DOUBLE, time_joined DOUBLE, time_online DOUBLE, time_login DOUBLE, time_logout DOUBLE, location_death TEXT, location_logout TEXT)");
 			else {
 				
 				/*
@@ -70,7 +73,7 @@ public class Database {
 				
 			}
 			
-			if(!tables.contains("nexus_warp")) execute("CREATE TABLE nexus_warp (id TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw DOUBLE, pitch DOUBLE, owner TEXT, restrictions TEXT, invited TEXT, message TEXT)");
+			if(!tables.contains(TABLE_ID_WARP)) execute("CREATE TABLE " + TABLE_ID_WARP + " (id TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw DOUBLE, pitch DOUBLE, owner TEXT, restrictions TEXT, invited TEXT, message TEXT)");
 			else {
 				
 				/*
@@ -122,7 +125,7 @@ public class Database {
 			
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM nexus_player WHERE uuid = '" + uuid + "'");
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_ID_PLAYER + " WHERE uuid = '" + uuid + "'");
 			
 			if(!resultSet.isBeforeFirst()) return null;
 			
@@ -154,7 +157,7 @@ public class Database {
 			
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM nexus_player WHERE uuid = '" + uuid + "'");
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_ID_PLAYER + " WHERE uuid = '" + uuid + "'");
 			
 			if(!resultSet.isBeforeFirst()) return null;
 			
@@ -187,7 +190,7 @@ public class Database {
 			
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM nexus_player WHERE name = '" + name + "'");
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_ID_PLAYER + " WHERE name = '" + name + "'");
 			
 			if(!resultSet.isBeforeFirst()) return null;
 			

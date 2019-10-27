@@ -1,10 +1,14 @@
 package me.mn7cc.nexus.custom;
 
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.util.VaultUtils;
 
 public class AccessList {
 	

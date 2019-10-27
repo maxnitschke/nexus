@@ -168,17 +168,17 @@ public class NexusPlayer {
 	}
 	
 	public void insert() {
-		Database.queue("INSERT INTO nexus_player VALUES ('" + uuid + "', '" + name + "', '" + name_last + "', '" + ip + "', '" + nick + "', '" + channel + "', '" + Encoder.STRING_LIST(mails) + "', '" + Encoder.STRING_LIST(friends) + "', '" + Encoder.STRING_LIST(blocked) + "', " + mode_god + ", " + mode_fly + ", " + mode_spy + ", " + mode_invisible + ", " + mode_teleportable + ", " + time_joined + ", " + time_online + ", " + time_login + ", " + time_logout + ", '" + Encoder.LOCATION(location_death) + "', '" + Encoder.LOCATION(location_logout) + "')");
+		Database.queue("INSERT INTO " + Database.TABLE_ID_PLAYER + " VALUES ('" + uuid + "', '" + name + "', '" + name_last + "', '" + ip + "', '" + nick + "', '" + channel + "', '" + Encoder.STRING_LIST(mails) + "', '" + Encoder.STRING_LIST(friends) + "', '" + Encoder.STRING_LIST(blocked) + "', " + mode_god + ", " + mode_fly + ", " + mode_spy + ", " + mode_invisible + ", " + mode_teleportable + ", " + time_joined + ", " + time_online + ", " + time_login + ", " + time_logout + ", '" + Encoder.LOCATION(location_death) + "', '" + Encoder.LOCATION(location_logout) + "')");
 		Database.addPlayer(this);
 	}
 	
 	public void update() {
-		if(pendingDatabaseUpdates.hasUpdates()) Database.queue("UPDATE nexus_player SET " + pendingDatabaseUpdates.getSQLString() + " WHERE uuid = '" + uuid + "'");
+		if(pendingDatabaseUpdates.hasUpdates()) Database.queue("UPDATE " + Database.TABLE_ID_PLAYER + " SET " + pendingDatabaseUpdates.getSQLString() + " WHERE uuid = '" + uuid + "'");
 		Database.addPlayer(this);
 	}
 	
 	public void delete() {
-		Database.queue("DELETE FROM nexus_player WHERE uuid = '" + uuid + "'");
+		Database.queue("DELETE FROM " + Database.TABLE_ID_PLAYER + " WHERE uuid = '" + uuid + "'");
 		Database.removePlayer(this);
 	}
 	
