@@ -62,10 +62,12 @@ public class MessageUtils {
 	}
 	
 	public static void send(CommandSender sender, Message message) {
+		if(message == null || message.getText().isEmpty()) return;
 		sender.sendMessage(TextUtils.color(getMessage(message)));
 	}
 	
 	public static void send(CommandSender sender, Message message, String... values) {
+		if(message == null || message.getText().isEmpty()) return;
 		sender.sendMessage(TextUtils.color(getMessage(message, values)));
 	}
 	
@@ -78,10 +80,12 @@ public class MessageUtils {
 	}
 
 	public static void send(Player player, Message message) {
+		if(message == null || message.getText().isEmpty()) return;
 		player.sendMessage(TextUtils.color(getMessage(message)));
 	}
 	
 	public static void send(Player player, Message message, String... values) {
+		if(message == null || message.getText().isEmpty()) return;
 		player.sendMessage(TextUtils.color(getMessage(message, values)));
 	}
 	
@@ -90,10 +94,12 @@ public class MessageUtils {
 	}
 	
 	public static void broadcast(Message message) {
+		if(message == null || message.getText().isEmpty()) return;
 		Bukkit.getServer().broadcastMessage(TextUtils.color(getMessage(message)));
 	}
 	
 	public static void broadcast(Message message, String... values) {
+		if(message == null || message.getText().isEmpty()) return;
 		Bukkit.getServer().broadcastMessage(TextUtils.color(getMessage(message, values)));
 	}
 	
@@ -102,10 +108,12 @@ public class MessageUtils {
 	}
 	
 	public static void broadcast(String permission, Message message) {
+		if(message == null || message.getText().isEmpty()) return;
 		for(Player player : Bukkit.getOnlinePlayers()) if(player.hasPermission(permission)) player.sendMessage(TextUtils.color(getMessage(message)));
 	}
 	
 	public static void broadcast(String permission, Message message, String... values) {
+		if(message == null || message.getText().isEmpty()) return;
 		for(Player player : Bukkit.getOnlinePlayers()) if(player.hasPermission(permission)) player.sendMessage(TextUtils.color(getMessage(message, values)));
 	}
 	

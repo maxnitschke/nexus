@@ -23,7 +23,12 @@ import me.mn7cc.nexus.file.ConfigFile;
 
 public class Database {
 	
+	public static final String TABLE_ID_BAN = FileManager.getConfigFile().getMySQLPrefix() + "ban";
+	public static final String TABLE_ID_HOME = FileManager.getConfigFile().getMySQLPrefix() + "home";
+	public static final String TABLE_ID_MUTE = FileManager.getConfigFile().getMySQLPrefix() + "mute";
 	public static final String TABLE_ID_PLAYER = FileManager.getConfigFile().getMySQLPrefix() + "player";
+	public static final String TABLE_ID_PORTAL = FileManager.getConfigFile().getMySQLPrefix() + "portal";
+	public static final String TABLE_ID_TICKET = FileManager.getConfigFile().getMySQLPrefix() + "ticket";
 	public static final String TABLE_ID_WARP = FileManager.getConfigFile().getMySQLPrefix() + "warp";
 	
 	private static HikariDataSource datasource = new HikariDataSource();

@@ -34,6 +34,7 @@ public class Encoder {
 	}
 	
 	public static String LOCATION(Location location) {
+		if(location == null) return "";
 		StringBuilder encoded = new StringBuilder();
 		encoded.append("world@" + location.getWorld().getName() + ";");
 		encoded.append("x@" + location.getX() + ";");
@@ -45,6 +46,7 @@ public class Encoder {
 	}
 	
 	public static String LOCATIONS(HashMap<String, Location> locations) {
+		if(locations == null || locations.isEmpty()) return "";
 		StringBuilder encoded = new StringBuilder();
 		for(Entry<String, Location> e : locations.entrySet()) {
 			Location location = e.getValue();

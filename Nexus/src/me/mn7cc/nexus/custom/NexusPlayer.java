@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.Decoder;
 import me.mn7cc.nexus.Encoder;
+import me.mn7cc.nexus.util.PlayerUtils;
 import me.mn7cc.nexus.util.VaultUtils;
 
 import net.milkbowl.vault.permission.Permission;
@@ -43,6 +44,35 @@ public class NexusPlayer {
 	
 	private PendingDatabaseUpdates pendingDatabaseUpdates;
 	private NexusPlayerSession session;
+	
+	public NexusPlayer(Player player) {
+		
+		this.uuid = player.getUniqueId().toString();
+		this.name = player.getName().toLowerCase();
+		this.name_last = player.getName();
+		this.ip = PlayerUtils.getIP(player);
+		this.nick = "";
+		this.channel = "";
+		this.mails = new ArrayList<String>();
+		this.friends = new ArrayList<String>();
+		this.blocked = new ArrayList<String>();
+		this.mode_god = 0;
+		this.mode_fly = 0;
+		this.mode_spy = 0;
+		this.mode_invisible = 0;
+		this.mode_teleportable = 0;
+		this.time_joined = System.currentTimeMillis();
+		this.time_online = 0;
+		this.time_login = System.currentTimeMillis();
+		this.time_logout = 0;
+		this.location_death = null;
+		this.location_logout = null;
+		
+		pendingDatabaseUpdates = new PendingDatabaseUpdates();
+		
+		session = new NexusPlayerSession(player);
+		
+	}
 	
 	public NexusPlayer(String uuid, String name, String name_last, String ip, String nick, String channel, List<String> mails, List<String> friends, List<String> blocked, double mode_god, double mode_fly, double mode_spy, double mode_invisible, double mode_teleportable, double time_joined, double time_online, double time_login, double time_logout, Location location_death, Location location_logout) {
 		
