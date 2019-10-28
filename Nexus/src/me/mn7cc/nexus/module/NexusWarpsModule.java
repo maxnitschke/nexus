@@ -2,12 +2,14 @@ package me.mn7cc.nexus.module;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
+import me.mn7cc.nexus.custom.NexusWarp;
 import me.mn7cc.nexus.custom.CommandContent;
 import me.mn7cc.nexus.custom.CommandManager;
 import me.mn7cc.nexus.custom.CommandModel;
@@ -51,6 +53,10 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 
 		@Override
 		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
+			
+			Player player = (Player) sender;
+			NexusWarp nexusWarp = content.getNexusWarp(0);
+			Player target = content.getPlayer(1);
 			
 		}
 

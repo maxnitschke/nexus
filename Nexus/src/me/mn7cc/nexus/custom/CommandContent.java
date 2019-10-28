@@ -97,5 +97,7 @@ public class CommandContent {
 	public int getInteger(int index) { return arguments.containsKey(index) ? arguments.get(index).getInteger() : null; }
 	public Player getPlayer(int index) { return arguments.containsKey(index) ? arguments.get(index).getPlayer() : null; }
 	public List<Player> getPlayers(int index) { return arguments.containsKey(index) ? arguments.get(index).getPlayers() : null; }
+	public NexusPlayer getNexusPlayer(int index) { return arguments.containsKey(index) ? arguments.get(index).getNexusPlayer() : null; }
+	public NexusWarp getNexusWarp(int index) { return arguments.containsKey(index) ? arguments.get(index).getNexusWarp() : null; }
 
 }

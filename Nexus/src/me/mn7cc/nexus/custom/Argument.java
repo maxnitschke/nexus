@@ -1,13 +1,13 @@
 package me.mn7cc.nexus.custom;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.exception.NexusCommandException;
+import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.exception.InvalidCommandModelException;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.ServerUtils;
@@ -112,6 +112,22 @@ public class Argument extends ArgumentData {
 			}
 			
 			setPlayers(players);
+			return;
+			
+		}
+		else if(requiredType == Type.NEXUS_PLAYER) {
+			
+			NexusPlayer nexusPlayer = Database.getPlayerByName(givenArgument);
+			if(nexusPlayer == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+			setNexusPlayer(nexusPlayer);
+			return;
+			
+		}
+		else if(requiredType == Type.NEXUS_WARP) {
+			
+			NexusWarp nexusWarp = Database.getWarp(givenArgument);
+			if(nexusWarp == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_WARP_NOT_FOUND));
+			setNexusWarp(nexusWarp);
 			return;
 			
 		}

@@ -78,7 +78,7 @@ public class Database {
 				
 			}
 			
-			if(!tables.contains(TABLE_ID_WARP)) execute("CREATE TABLE " + TABLE_ID_WARP + " (id TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw DOUBLE, pitch DOUBLE, owner TEXT, restrictions TEXT, invited TEXT, message TEXT)");
+			if(!tables.contains(TABLE_ID_WARP)) execute("CREATE TABLE " + TABLE_ID_WARP + " (id TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT, owner TEXT, priv BOOLEAN, invited TEXT, message TEXT)");
 			else {
 				
 				/*
@@ -218,6 +218,36 @@ public class Database {
 		
 	}
 	
+	public static NexusWarp getWarp(String id) {
+		
+		if(warps.containsKey(id)) return warps.get(id);
+		
+		NexusWarp nexusWarp = null;
+		
+		try {
+			
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_ID_WARP + " WHERE id = '" + id + "'");
+			
+			if(!resultSet.isBeforeFirst()) return null;
+			
+			nexusWarp = new NexusWarp(resultSet);
+			
+			resultSet.close();
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(!proxy) addWarp(nexusWarp);
+		
+		return nexusWarp;
+		
+	}
+	
 	public static boolean isClosed() {
 		return datasource.isClosed();
 	}
@@ -329,7 +359,6 @@ public class Database {
 	private static HashMap<String, NexusWarp> warps = new HashMap<String, NexusWarp>();
 	public static void addWarp(NexusWarp warp) { warps.put(warp.getId(), warp); }
 	public static void removeWarp(String id) { warps.remove(id); }
-	public static NexusWarp getWarp(String id) { return warps.containsKey(id) ? warps.get(id) : null; }
 	public static HashMap<String, NexusWarp> getWarps() { return warps; }
 
 }

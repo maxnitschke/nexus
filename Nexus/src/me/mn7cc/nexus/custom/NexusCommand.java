@@ -38,7 +38,7 @@ public class NexusCommand extends Command {
 			
 		}
 		catch (NexusCommandException e) {
-			MessageUtils.send(sender, e.getMessage());
+			if(e.getMessage() != null && !e.getMessage().isEmpty()) MessageUtils.send(sender, e.getMessage());
 			MessageUtils.send(sender, Message.COMMAND_USAGE, model.getUsage());
 		}
 		catch (InvalidCommandModelException e) {
@@ -53,7 +53,7 @@ public class NexusCommand extends Command {
 		
 		if(args.length == 0) return command;
 		
-		String arguments = Arrays.toString(args).toLowerCase();
+		String arguments = String.join(" ", args);
 		for(Entry<String, INexusCommand> entry : subCommands.entrySet()) {
 			if(arguments.startsWith(entry.getKey().toLowerCase())) return entry.getValue();
 		}

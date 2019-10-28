@@ -12,6 +12,7 @@ public enum Message {
 	COMMAND_ERROR_REQUIRES_PLAYER_AS_SENDER("&4This command cannot be run by the console!"),
 	COMMAND_ERROR_TOO_FEW_ARGUMENTS("&4Error: &7Too few arguments!"),
 	COMMAND_ERROR_TOO_MANY_ARGUMENTS("&4Error: &7Too many arguments!"),
+	COMMAND_ERROR_WARP_NOT_FOUND("&4Error: &7Warp not found!"),
 	COMMAND_ERROR_WORLD_NOT_FOUND("&4Error: &7Player not found!"),
 	COMMAND_HELP_HEADER("&c&l{0} &7&lHelp"),
 	COMMAND_HELP_COMMAND("&8&l> &f{0}"),

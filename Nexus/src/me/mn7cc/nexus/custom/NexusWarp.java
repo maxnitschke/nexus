@@ -1,5 +1,7 @@
 package me.mn7cc.nexus.custom;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.Decoder;
 import me.mn7cc.nexus.Encoder;
 import me.mn7cc.nexus.event.NexusWarpTeleportEvent;
 
@@ -19,8 +22,8 @@ public class NexusWarp {
 	private double x;
 	private double y;
 	private double z;
-	private double yaw;
-	private double pitch;
+	private float yaw;
+	private float pitch;
 	private String owner;
 	private List<String> members;
 	private boolean priv;
@@ -29,7 +32,7 @@ public class NexusWarp {
 	
 	private PendingDatabaseUpdates pendingDatabaseUpdates;
 
-	public NexusWarp(String id, String world, double x, double y, double z, double yaw, double pitch, String owner, List<String> members, boolean priv, AccessList invited, String message) {
+	public NexusWarp(String id, String world, double x, double y, double z, float yaw, float pitch, String owner, List<String> members, boolean priv, AccessList invited, String message) {
 		
 		this.id = id;
 		this.world = world;
@@ -48,26 +51,54 @@ public class NexusWarp {
 		
 	}
 	
-	public void setId(String id) { this.id = id; }
-	public void setWorld(String world) { this.world = world; }
-	public void setX(double x) { this.x = x; }
-	public void setY(double y) { this.y = y; }
-	public void setZ(double z) { this.z = z; }
-	public void setYaw(double yaw) { this.yaw = yaw; }
-	public void setPitch(double pitch) { this.pitch = pitch; }
-	public void setOwner(String owner) { this.owner = owner; }
-	public void setMembers(List<String> members) { this.members = members; }
-	public void setPrivate(boolean priv) { this.priv = priv; }
-	public void setInvited(AccessList invited) { this.invited = invited; }
-	public void setMessage(String message) { this.message = message; }
+	public NexusWarp(ResultSet resultSet) {
+		
+		try {
+			
+			if(resultSet.next()) {
+		
+				this.id = resultSet.getString("id");
+				this.world = resultSet.getString("world");
+				this.x = resultSet.getDouble("x");
+				this.y = resultSet.getDouble("y");
+				this.z = resultSet.getDouble("z");
+				this.yaw = resultSet.getFloat("yaw");
+				this.pitch = resultSet.getFloat("pitch");
+				this.owner = resultSet.getString("owner");
+				this.members = Decoder.STRING_LIST(resultSet.getString("members"));
+				this.invited = Decoder.ACCESS_LIST(resultSet.getString("invited"));
+				this.priv = resultSet.getBoolean("priv");
+				this.message = resultSet.getString("message");
+			
+			}
+		
+		}
+		catch(SQLException e) { e.printStackTrace(); }
+
+		pendingDatabaseUpdates = new PendingDatabaseUpdates();
+		
+	}
+	
+	public void setId(String id) { this.id = id; pendingDatabaseUpdates.addUpdate("id", id); }
+	public void setWorld(String world) { this.world = world; pendingDatabaseUpdates.addUpdate("world", world); }
+	public void setX(double x) { this.x = x; pendingDatabaseUpdates.addUpdate("x", x); }
+	public void setY(double y) { this.y = y; pendingDatabaseUpdates.addUpdate("y", y); }
+	public void setZ(double z) { this.z = z; pendingDatabaseUpdates.addUpdate("z", z); }
+	public void setYaw(float yaw) { this.yaw = yaw; pendingDatabaseUpdates.addUpdate("yaw", yaw); }
+	public void setPitch(float pitch) { this.pitch = pitch; pendingDatabaseUpdates.addUpdate("pitch", pitch); }
+	public void setOwner(String owner) { this.owner = owner; pendingDatabaseUpdates.addUpdate("owner", owner); }
+	public void setMembers(List<String> members) { this.members = members; pendingDatabaseUpdates.addUpdate("members", Encoder.STRING_LIST(members)); }
+	public void setPrivate(boolean priv) { this.priv = priv; pendingDatabaseUpdates.addUpdate("priv", priv); }
+	public void setInvited(AccessList invited) { this.invited = invited; pendingDatabaseUpdates.addUpdate("invited", Encoder.ACCESS_LIST(invited)); }
+	public void setMessage(String message) { this.message = message; pendingDatabaseUpdates.addUpdate("message", message); }
 	
 	public String getId() { return id; }
 	public String getWorld() { return world; }
 	public double getX() { return x; }
 	public double getY() { return y; }
 	public double getZ() { return z; }
-	public double getYaw() { return yaw; }
-	public double getPitch() { return pitch; }
+	public float getYaw() { return yaw; }
+	public float getPitch() { return pitch; }
 	public String getOwner() { return owner; }
 	public List<String> getMembers() { return members; }
 	public boolean isPrivate() { return priv; }
@@ -110,7 +141,7 @@ public class NexusWarp {
 	public Location getLocation() {
 		World world = Bukkit.getWorld(UUID.fromString(this.world));
 		if(world == null) return null;
-		return new Location(world, x, y, z, (float) yaw, (float) pitch);
+		return new Location(world, x, y, z, yaw, pitch);
 	}
 	
 	public void spawnPlayer(Player player) {
