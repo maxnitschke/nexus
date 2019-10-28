@@ -80,21 +80,30 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 			Player target = content.getPlayer(1);
 
 			if(target == null) {
+				
 				Player player = players.get(0);
+				
 				source.teleport(player);
+				
 				MessageUtils.send(source, Message.TELEPORT_SOURCE, player.getName());
 				if(player != source) MessageUtils.send(player, Message.TELEPORT_TARGET, source.getName());
+				
 				return;
+				
 			}
 			
 			if(!CommandUtils.hasPermission(sender, "nexus.tp.others", Message.INSUFFICIENT_PERMISSIONS_TELEPORT_OTHERS)) return;
 			if(players.size() > 1 && !CommandUtils.hasPermission(sender, "nexus.tp.multiple", Message.INSUFFICIENT_PERMISSIONS_TELEPORT_MULTIPLE)) return;
 			
 			MessageUtils.send(source, Message.TELEPORT_OTHERS, StringUtils.toString(players), target.getName());
+			
 			for(Player player : players) {
+				
 				player.teleport(target);
+				
 				if(player != source) MessageUtils.send(player, Message.TELEPORT_SOURCE_OTHERS, source.getName(), target.getName());
 				if(player != target) MessageUtils.send(target, Message.TELEPORT_TARGET_OTHERS, source.getName(), player.getName());
+				
 			}
 			
 		}
@@ -115,9 +124,13 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 			List<Player> players = content.getPlayers(0);
 
 			MessageUtils.send(source, Message.TELEPORT_TARGET, StringUtils.toString(players));
+			
 			for(Player player : players) {
+				
 				player.teleport(source);
+				
 				MessageUtils.send(player, Message.TELEPORT_SOURCE, source.getName());
+				
 			}
 			
 		}

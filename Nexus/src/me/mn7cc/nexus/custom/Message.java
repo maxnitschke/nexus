@@ -21,6 +21,7 @@ public enum Message {
 	INSUFFICIENT_PERMISSIONS_TELEPORT_OTHERS("&4You do not have permissions to teleport other players!"),
 	INSUFFICIENT_PERMISSIONS_TELEPORT_MULTIPLE("&4You do not have permissions to teleport multiple players!"),
 	INSUFFICIENT_PERMISSIONS_WARP_OTHERS("&4You do not have permissions to warp other players!"),
+	INSUFFICIENT_PERMISSIONS_WARP_MULTIPLE("&4You do not have permissions to warp multiple players!"),
 	PLAYER_JOINED("&f{0} &7joined."),
 	PLAYER_JOINED_FIRST("&f{0} &7joined for the first time!"),
 	PLAYER_JOINED_NEW_NAME("&f{0} &7joined with new name &f{1}&7."),
