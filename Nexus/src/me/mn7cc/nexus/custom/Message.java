@@ -18,6 +18,9 @@ public enum Message {
 	COMMAND_HELP_COMMAND("&8&l> &f{0}"),
 	COMMAND_USAGE("&4Usage: &f{0}"),
 	INSUFFICIENT_PERMISSIONS("&4You do not have permissions!"),
+	INSUFFICIENT_PERMISSIONS_TELEPORT_OTHERS("&4You do not have permissions to teleport other players!"),
+	INSUFFICIENT_PERMISSIONS_TELEPORT_MULTIPLE("&4You do not have permissions to teleport multiple players!"),
+	INSUFFICIENT_PERMISSIONS_WARP_OTHERS("&4You do not have permissions to warp other players!"),
 	PLAYER_JOINED("&f{0} &7joined."),
 	PLAYER_JOINED_FIRST("&f{0} &7joined for the first time!"),
 	PLAYER_JOINED_NEW_NAME("&f{0} &7joined with new name &f{1}&7."),
@@ -37,7 +40,10 @@ public enum Message {
 	TELEPORT_SOURCE("&c&l! &7Teleported to &f{0}&7."),
 	TELEPORT_SOURCE_OTHERS("&c&l! &7&f{0} &7has teleported you to &f{1}&7."),
 	TELEPORT_TARGET("&c&l! &f{0} &7has teleported to you."),
-	TELEPORT_TARGET_OTHERS("&c&l! &f{0} &7has teleported &f{1} &7to you.");
+	TELEPORT_TARGET_OTHERS("&c&l! &f{0} &7has teleported &f{1} &7to you."),
+	WARP_MESSAGE_CUSTOM("&c&l! &f{0}"),
+	WARP_MESSAGE_DEFAULT("&c&l! &7Warped to &f{0}&7."),
+	WARP_TELEPORT_OTHERS("&c&l! &7Warped &f{0} &7to &f{1}&7.");
 	
 	private String text;
 	

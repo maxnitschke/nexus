@@ -14,6 +14,7 @@ import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
 import me.mn7cc.nexus.custom.NexusPlayer;
 import me.mn7cc.nexus.exception.InvalidTimeFormatException;
+import me.mn7cc.nexus.util.CommandUtils;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.StringUtils;
 import me.mn7cc.nexus.util.TimeUtils;
@@ -85,6 +86,9 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 				if(player != source) MessageUtils.send(player, Message.TELEPORT_TARGET, source.getName());
 				return;
 			}
+			
+			if(!CommandUtils.hasPermission(sender, "nexus.tp.others", Message.INSUFFICIENT_PERMISSIONS_TELEPORT_OTHERS)) return;
+			if(players.size() > 1 && !CommandUtils.hasPermission(sender, "nexus.tp.multiple", Message.INSUFFICIENT_PERMISSIONS_TELEPORT_MULTIPLE)) return;
 			
 			MessageUtils.send(source, Message.TELEPORT_OTHERS, StringUtils.toString(players), target.getName());
 			for(Player player : players) {

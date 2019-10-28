@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.Decoder;
 import me.mn7cc.nexus.Encoder;
-import me.mn7cc.nexus.event.NexusWarpTeleportEvent;
 
 public class NexusWarp {
 	
@@ -145,9 +144,6 @@ public class NexusWarp {
 	}
 	
 	public void spawnPlayer(Player player) {
-		NexusWarpTeleportEvent nexusWarpTeleportEvent = new NexusWarpTeleportEvent(player, this);
-		Bukkit.getPluginManager().callEvent(nexusWarpTeleportEvent);
-		if(nexusWarpTeleportEvent.isCancelled()) return;
 		player.teleport(getLocation());
 	}
 	
