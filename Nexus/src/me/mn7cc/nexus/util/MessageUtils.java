@@ -31,7 +31,8 @@ public class MessageUtils {
 		if(!messages.containsKey(message)) return null;
 		
 		String result = messages.get(message);
-		
+		if(result == null || result.isEmpty() || result.equalsIgnoreCase("disabled")) return null;
+			
 		if(values != null) {
 		
 			int index = 0;
