@@ -78,7 +78,7 @@ public class Database {
 				
 			}
 			
-			if(!tables.contains(TABLE_ID_WARP)) execute("CREATE TABLE " + TABLE_ID_WARP + " (id TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT, owner TEXT, priv BOOLEAN, invited TEXT, message TEXT)");
+			if(!tables.contains(TABLE_ID_WARP)) execute("CREATE TABLE " + TABLE_ID_WARP + " (id TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT, owner TEXT, priv BOOLEAN, invited TEXT, banned TEXT, message TEXT)");
 			else {
 				
 				/*

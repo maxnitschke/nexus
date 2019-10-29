@@ -2,6 +2,7 @@ package me.mn7cc.nexus.custom;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,10 +28,31 @@ public class NexusWarp {
 	private List<String> members;
 	private boolean priv;
 	private AccessList invited;
+	private AccessList banned;
 	private String message;
 	
 	private PendingDatabaseUpdates pendingDatabaseUpdates;
 
+	public NexusWarp(String id, Player player) {
+		
+		Location location = player.getLocation();
+		
+		this.id = id;
+		this.world = player.getWorld().getUID().toString();
+		this.x = location.getX();
+		this.y = location.getY();
+		this.z = location.getZ();
+		this.yaw = location.getYaw();
+		this.pitch = location.getPitch();
+		this.owner = player.getUniqueId().toString();
+		this.members = new ArrayList<String>();
+		this.priv = false;
+		this.invited = new AccessList();
+		this.banned = new AccessList();
+		this.message = "";
+		
+	}
+	
 	public NexusWarp(String id, String world, double x, double y, double z, float yaw, float pitch, String owner, List<String> members, boolean priv, AccessList invited, String message) {
 		
 		this.id = id;
@@ -43,6 +65,7 @@ public class NexusWarp {
 		this.owner = owner;
 		this.members = members;
 		this.invited = invited;
+		this.banned = banned;
 		this.priv = priv;
 		this.message = message;
 		
@@ -66,6 +89,7 @@ public class NexusWarp {
 				this.owner = resultSet.getString("owner");
 				this.members = Decoder.STRING_LIST(resultSet.getString("members"));
 				this.invited = Decoder.ACCESS_LIST(resultSet.getString("invited"));
+				this.banned = Decoder.ACCESS_LIST(resultSet.getString("banned"));
 				this.priv = resultSet.getBoolean("priv");
 				this.message = resultSet.getString("message");
 			
@@ -89,6 +113,7 @@ public class NexusWarp {
 	public void setMembers(List<String> members) { this.members = members; pendingDatabaseUpdates.addUpdate("members", Encoder.STRING_LIST(members)); }
 	public void setPrivate(boolean priv) { this.priv = priv; pendingDatabaseUpdates.addUpdate("priv", priv); }
 	public void setInvited(AccessList invited) { this.invited = invited; pendingDatabaseUpdates.addUpdate("invited", Encoder.ACCESS_LIST(invited)); }
+	public void setBanned(AccessList banned) { this.banned = banned; pendingDatabaseUpdates.addUpdate("banned", Encoder.ACCESS_LIST(banned)); }
 	public void setMessage(String message) { this.message = message; pendingDatabaseUpdates.addUpdate("message", message); }
 	
 	public String getId() { return id; }
@@ -148,7 +173,7 @@ public class NexusWarp {
 	}
 	
 	public void insert() {
-		Database.queue("INSERT INTO " + Database.TABLE_ID_WARP + " VALUES ('" + id + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', priv, '" + Encoder.ACCESS_LIST(invited) + "', '" + message + "')");
+		Database.queue("INSERT INTO " + Database.TABLE_ID_WARP + " VALUES ('" + id + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', priv, '" + Encoder.ACCESS_LIST(invited) + "', '" + Encoder.ACCESS_LIST(banned) + "', '" + message + "')");
 		Database.addWarp(this);
 	}
 	

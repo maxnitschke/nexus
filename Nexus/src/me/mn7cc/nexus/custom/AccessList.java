@@ -1,14 +1,10 @@
 package me.mn7cc.nexus.custom;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.Database;
-import me.mn7cc.nexus.util.VaultUtils;
 
 public class AccessList {
 	
@@ -19,6 +15,12 @@ public class AccessList {
 	public List<String> getUsers() { return users; }
 	public List<String> getGroups() { return groups; }
 	public List<String> getPermissions() { return permissions; }
+	
+	public AccessList() {
+		this.users = new ArrayList<String>();
+		this.groups = new ArrayList<String>();
+		this.permissions = new ArrayList<String>();
+	}
 	
 	public AccessList(List<String> users, List<String> groups, List<String> permissions) {
 		this.users = users;

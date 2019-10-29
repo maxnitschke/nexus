@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
+import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
@@ -111,6 +112,13 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			Player source = (Player) sender;
 			String id = content.getString(1).toLowerCase();
 			
+			if(Database.getWarp(id) != null) {
+				MessageUtils.send(sender, Message.COMMAND_ERROR_WARP_ALREADY_EXISTS);
+				return;
+			}
+			
+			NexusWarp nexusWarp = new NexusWarp(id, source);
+			nexusWarp.insert();
 			
 			
 		}

@@ -12,6 +12,7 @@ public enum Message {
 	COMMAND_ERROR_REQUIRES_PLAYER_AS_SENDER("&4This command cannot be run by the console!"),
 	COMMAND_ERROR_TOO_FEW_ARGUMENTS("&4Error: &7Too few arguments!"),
 	COMMAND_ERROR_TOO_MANY_ARGUMENTS("&4Error: &7Too many arguments!"),
+	COMMAND_ERROR_WARP_ALREADY_EXISTS("&4Error: &7Warp does already exist!"),
 	COMMAND_ERROR_WARP_NOT_FOUND("&4Error: &7Warp not found!"),
 	COMMAND_ERROR_WORLD_NOT_FOUND("&4Error: &7Player not found!"),
 	COMMAND_HELP_HEADER("&c&l{0} &7&lHelp"),
@@ -42,9 +43,23 @@ public enum Message {
 	TELEPORT_SOURCE_OTHERS("&c&l! &7&f{0} &7has teleported you to &f{1}&7."),
 	TELEPORT_TARGET("&c&l! &f{0} &7has teleported to you."),
 	TELEPORT_TARGET_OTHERS("&c&l! &f{0} &7has teleported &f{1} &7to you."),
+	WARP_BANNED("&c&l! &f{0} &7has been banned from &f{0}&7."),
+	WARP_CREATED("&c&l! &7Warp &f{0} &7has been created."),
+	WARP_INVITED("&c&l! &f{0} &7has been invited to &f{1}&7."),
+	WARP_INVITED_LIMIT_REACHED("&c&l! &7You cannot invite more than &f{0} &7players."),
+	WARP_LIMIT_INFO("&c&l! &7You currently own &f{0}&7/&f{1} &7warps."),
+	WARP_LIMIT_REACHED("&c&l! &7You cannot own more than &f{0} &7warps."),
+	WARP_MEMBER_ADDED("&c&l! &f{0} &7has been added to &f{1}&7."),
+	WARP_MEMBER_LIMIT_REACHED("&c&l! &7You cannot add more than &f{0} &7members."),
+	WARP_MEMBER_REMOVED("&c&l! &f{0} &7has been removed from &f{1}&7."),
 	WARP_MESSAGE_CUSTOM("&c&l! &f{0}"),
 	WARP_MESSAGE_DEFAULT("&c&l! &7Warped to &f{0}&7."),
-	WARP_TELEPORT_OTHERS("&c&l! &7Warped &f{0} &7to &f{1}&7.");
+	WARP_MOVED("&c&l! &7Warp &f{0} &7has been moved."),
+	WARP_REMOVED("&c&l! &7Warp &f{0} &7has been removed."),
+	WARP_TELEPORT_OTHERS("&c&l! &7Warped &f{0} &7to &f{1}&7."),
+	WARP_TRANSFERRED_OWNERSHIP("&c&l! &7Ownership of &f{0} &7has been transferred to &f{1}&7."),
+	WARP_UNBANNED("&c&l! &f{0} &7has been unbanned from &f{0}&7."),
+	WARP_UNINVITED("&c&l! &f{0} &7has been uninvited from &f{1}&7.");
 	
 	private String text;
 	
