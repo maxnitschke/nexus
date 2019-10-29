@@ -10,11 +10,13 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.Decoder;
 import me.mn7cc.nexus.Encoder;
 import me.mn7cc.nexus.util.PlayerUtils;
+import me.mn7cc.nexus.util.StringUtils;
 import me.mn7cc.nexus.util.VaultUtils;
 
 import net.milkbowl.vault.permission.Permission;
@@ -41,6 +43,9 @@ public class NexusPlayer {
 	private double time_logout;	
 	private Location location_death;
 	private Location location_logout;
+	private int count_homes;
+	private int count_warps;
+	private int count_tickets;
 	
 	private PendingDatabaseUpdates pendingDatabaseUpdates;
 	private NexusPlayerSession session;
@@ -67,6 +72,9 @@ public class NexusPlayer {
 		this.time_logout = 0;
 		this.location_death = null;
 		this.location_logout = null;
+		this.count_homes = 0;
+		this.count_warps = 0;
+		this.count_tickets = 0;
 		
 		pendingDatabaseUpdates = new PendingDatabaseUpdates();
 		
@@ -130,6 +138,9 @@ public class NexusPlayer {
 				this.time_logout = resultSet.getDouble("time_logout");
 				this.location_death = Decoder.LOCATION(resultSet.getString("location_death"));
 				this.location_logout = Decoder.LOCATION(resultSet.getString("location_logout"));
+				this.count_homes = resultSet.getInt("count_homes");
+				this.count_warps = resultSet.getInt("count_warps");
+				this.count_tickets = resultSet.getInt("count_tickets");
 			
 			}
 		
@@ -151,17 +162,20 @@ public class NexusPlayer {
 	public void setChatChannel(String chatChannel) { this.channel = chatChannel; pendingDatabaseUpdates.addUpdate("channel", chatChannel); }
 	public void setFriends(List<String> friends) { this.friends = friends; pendingDatabaseUpdates.addUpdate("friends", Encoder.STRING_LIST(friends)); }
 	public void setBlocked(List<String> blocked) { this.blocked = blocked; pendingDatabaseUpdates.addUpdate("blocked", Encoder.STRING_LIST(blocked)); }
-	public void setGodMode(double godmode) { this.mode_god = godmode; pendingDatabaseUpdates.addUpdate("mode_god", godmode); }
-	public void setFlyMode(double flymode) { this.mode_fly = flymode; pendingDatabaseUpdates.addUpdate("mode_fly", flymode); }
-	public void setSpyMode(double spymode) { this.mode_spy = spymode; pendingDatabaseUpdates.addUpdate("mode_spy", spymode); }
+	public void setGodMode(double godMode) { this.mode_god = godMode; pendingDatabaseUpdates.addUpdate("mode_god", godMode); }
+	public void setFlyMode(double flyMode) { this.mode_fly = flyMode; pendingDatabaseUpdates.addUpdate("mode_fly", flyMode); }
+	public void setSpyMode(double spyMode) { this.mode_spy = spyMode; pendingDatabaseUpdates.addUpdate("mode_spy", spyMode); }
 	public void setInvisible(double invisible) { this.mode_invisible = invisible; pendingDatabaseUpdates.addUpdate("mode_invisible", invisible); }
 	public void setTeleportable(double teleportable) { this.mode_teleportable = teleportable; pendingDatabaseUpdates.addUpdate("mode_teleportable", teleportable); }
-	public void setJoinedTime(double joinedtime) { this.time_joined = joinedtime; pendingDatabaseUpdates.addUpdate("time_joined", joinedtime); }
-	public void setOnlineTime(double onlinetime) { this.time_online = onlinetime; pendingDatabaseUpdates.addUpdate("time_online", onlinetime); }
-	public void setLoginTime(double logintime) { this.time_login = logintime; pendingDatabaseUpdates.addUpdate("time_login", logintime); }
-	public void setLogoutTime(double logouttime) { this.time_logout = logouttime; pendingDatabaseUpdates.addUpdate("time_logout", logouttime); }
+	public void setJoinedTime(double joinedTime) { this.time_joined = joinedTime; pendingDatabaseUpdates.addUpdate("time_joined", joinedTime); }
+	public void setOnlineTime(double onlineTime) { this.time_online = onlineTime; pendingDatabaseUpdates.addUpdate("time_online", onlineTime); }
+	public void setLoginTime(double loginTime) { this.time_login = loginTime; pendingDatabaseUpdates.addUpdate("time_login", loginTime); }
+	public void setLogoutTime(double logoutTime) { this.time_logout = logoutTime; pendingDatabaseUpdates.addUpdate("time_logout", logoutTime); }
 	public void setDeathLocation(Location deathLocation) { this.location_death = deathLocation; pendingDatabaseUpdates.addUpdate("location_death", Encoder.LOCATION(deathLocation)); }
 	public void setLogoutLocation(Location logoutLocation) { this.location_logout = logoutLocation; pendingDatabaseUpdates.addUpdate("location_logout", Encoder.LOCATION(logoutLocation)); }
+	public void setHomeCount(int homeCount) { this.count_homes = homeCount; pendingDatabaseUpdates.addUpdate("count_homes", homeCount); }
+	public void setWarpCount(int warpCount) { this.count_warps = warpCount; pendingDatabaseUpdates.addUpdate("count_warps", warpCount); }
+	public void setTicketCount(int ticketCount) { this.count_tickets = ticketCount; pendingDatabaseUpdates.addUpdate("count_tickets", ticketCount); }
 	
 	public String getUUID() { return uuid; }
 	public String getName() { return name; }
@@ -183,8 +197,83 @@ public class NexusPlayer {
 	public double getLogoutTime() { return time_logout; }
 	public Location getDeathLocation() { return location_death; }
 	public Location getLogoutLocation() { return location_logout; }
+	public int getHomeCount() { return count_homes; }
+	public int getWarpCount() { return count_warps; }
+	public int getTicketCount() { return count_tickets; }
 	
 	public NexusPlayerSession getSession() { return session; }
+	
+	public int getHomeLimit() {
+		
+		int limit = 1;
+		
+		if(session == null) return limit;
+		
+		Player player = session.getPlayer();
+		
+		for(PermissionAttachmentInfo permissionAttachmentInfo : player.getEffectivePermissions()) {
+
+			if(!permissionAttachmentInfo.getValue()) continue;
+			
+			String permission = permissionAttachmentInfo.getPermission().toLowerCase();
+			if(!permission.contains("nexus.home.set.")) continue;
+			
+			int current = StringUtils.parseInteger(permission.replaceAll("nexus.home.set.", ""));
+			if(current > limit) limit = current;
+						
+		}
+		
+		return limit;
+		
+	}
+	
+	public int getWarpLimit() {
+		
+		int limit = 1;
+		
+		if(session == null) return limit;
+		
+		Player player = session.getPlayer();
+		
+		for(PermissionAttachmentInfo permissionAttachmentInfo : player.getEffectivePermissions()) {
+
+			if(!permissionAttachmentInfo.getValue()) continue;
+			
+			String permission = permissionAttachmentInfo.getPermission().toLowerCase();
+			if(!permission.contains("nexus.warp.set.")) continue;
+			
+			int current = StringUtils.parseInteger(permission.replaceAll("nexus.warp.set.", ""));
+			if(current > limit) limit = current;
+						
+		}
+		
+		return limit;
+		
+	}
+	
+	public int getTicketLimit() {
+		
+		int limit = 1;
+		
+		if(session == null) return limit;
+		
+		Player player = session.getPlayer();
+		
+		for(PermissionAttachmentInfo permissionAttachmentInfo : player.getEffectivePermissions()) {
+
+			if(!permissionAttachmentInfo.getValue()) continue;
+			
+			String permission = permissionAttachmentInfo.getPermission().toLowerCase();
+			if(!permission.contains("nexus.ticket.")) continue;
+			
+			int current = StringUtils.parseInteger(permission.replaceAll("nexus.ticket.", ""));
+			if(current > limit) limit = current;
+						
+		}
+		
+		return limit;
+		
+	}
 	
 	public List<String> getGroups() {
 		
@@ -198,7 +287,7 @@ public class NexusPlayer {
 	}
 	
 	public void insert() {
-		Database.queue("INSERT INTO " + Database.TABLE_ID_PLAYER + " VALUES ('" + uuid + "', '" + name + "', '" + name_last + "', '" + ip + "', '" + nick + "', '" + channel + "', '" + Encoder.STRING_LIST(mails) + "', '" + Encoder.STRING_LIST(friends) + "', '" + Encoder.STRING_LIST(blocked) + "', " + mode_god + ", " + mode_fly + ", " + mode_spy + ", " + mode_invisible + ", " + mode_teleportable + ", " + time_joined + ", " + time_online + ", " + time_login + ", " + time_logout + ", '" + Encoder.LOCATION(location_death) + "', '" + Encoder.LOCATION(location_logout) + "')");
+		Database.queue("INSERT INTO " + Database.TABLE_ID_PLAYER + " VALUES ('" + uuid + "', '" + name + "', '" + name_last + "', '" + ip + "', '" + nick + "', '" + channel + "', '" + Encoder.STRING_LIST(mails) + "', '" + Encoder.STRING_LIST(friends) + "', '" + Encoder.STRING_LIST(blocked) + "', " + mode_god + ", " + mode_fly + ", " + mode_spy + ", " + mode_invisible + ", " + mode_teleportable + ", " + time_joined + ", " + time_online + ", " + time_login + ", " + time_logout + ", '" + Encoder.LOCATION(location_death) + "', '" + Encoder.LOCATION(location_logout) + "', " + count_homes + ", " + count_warps + ", " + count_tickets + ")");
 		Database.addPlayer(this);
 	}
 	

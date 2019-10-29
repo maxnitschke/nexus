@@ -153,6 +153,22 @@ public class NexusWarp {
 		if(members.contains(uuid)) members.remove(uuid);
 	}
 	
+	public void invitePlayer(NexusPlayer nexusPlayer) {
+		invited.addUser(nexusPlayer.getUUID());
+	}
+	
+	public void uninvitePlayer(NexusPlayer nexusPlayer) {
+		invited.removeUser(nexusPlayer.getUUID());
+	}
+	
+	public void banPlayer(NexusPlayer nexusPlayer) {
+		banned.addUser(nexusPlayer.getUUID());
+	}
+	
+	public void unbanPlayer(NexusPlayer nexusPlayer) {
+		banned.removeUser(nexusPlayer.getUUID());
+	}
+	
 	public void moveTo(Location location) {
 		this.world = location.getWorld().getUID().toString();
 		this.x = location.getX();

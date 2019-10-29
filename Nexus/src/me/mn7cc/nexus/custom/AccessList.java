@@ -40,4 +40,16 @@ public class AccessList {
 		
 	}
 	
+	public void addUser(String uuid) { if(!users.contains(uuid)) users.add(uuid); }
+	public void addGroup(String group) { if(!groups.contains(group)) groups.add(group); }
+	public void addPermission(String permission) { if(!permissions.contains(permission)) permissions.add(permission); }
+	
+	public void removeUser(String uuid) { if(users.contains(uuid)) users.remove(uuid); }
+	public void removeGroup(String group) { if(groups.contains(group)) groups.remove(group); }
+	public void removePermission(String permission) { if(permissions.contains(permission)) permissions.remove(permission); }
+	
+	public boolean containsUser(String uuid) { return users.contains(uuid); }
+	public boolean containsGroup(String group) { return groups.contains(group); }
+	public boolean containsPermission(String permission) { return permissions.contains(permission); }
+	
 }

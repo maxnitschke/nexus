@@ -37,9 +37,8 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 		
         CommandManager.registerCommand(
         		new NexusCommandBuilder(new CommandWarp(), "warp", "waypoint")
-        		.addSubCommand(new CommandWarpCreate(), "create", "c", "set", "s")
-//        		.addSubCommand("remove", new CommandWarpRemove())
-//        		.addSubCommand("list", new CommandWarpList())
+        		.addSubCommand(new CommandWarpSet(), "set", "s", "create", "c")
+        		.addSubCommand(new CommandWarpDelete(), "delete", "del", "d", "remove", "rem", "r")
         		.getNexusCommand());
 		
 		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -99,10 +98,10 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 
 	}
 	
-	public static class CommandWarpCreate extends CommandModel implements INexusCommand {
+	public static class CommandWarpSet extends CommandModel implements INexusCommand {
 		
-		public CommandWarpCreate() {
-			super(true, "nexus.warp.create", "/warp create <id>",
+		public CommandWarpSet() {
+			super(true, "nexus.warp.set", "/warp set <id>",
 			new ArgumentModel(1, "<id>", Argument.Type.STRING));
 		}
 
@@ -120,6 +119,34 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			NexusWarp nexusWarp = new NexusWarp(id, source);
 			nexusWarp.insert();
 			
+			MessageUtils.send(sender, Message.WARP_CREATED, id);
+			
+		}
+
+	}
+	
+	public static class CommandWarpDelete extends CommandModel implements INexusCommand {
+		
+		public CommandWarpDelete() {
+			super(false, "nexus.warp.delete", "/warp delete <id>",
+			new ArgumentModel(1, "<id>", Argument.Type.STRING));
+		}
+
+		@Override
+		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
+			
+			String id = content.getString(1).toLowerCase();
+			
+			NexusWarp nexusWarp = Database.getWarp(id);
+			
+			if(nexusWarp == null) {
+				MessageUtils.send(sender, Message.COMMAND_ERROR_WARP_NOT_FOUND);
+				return;
+			}
+			
+			nexusWarp.delete();
+			
+			MessageUtils.send(sender, Message.WARP_REMOVED, id);
 			
 		}
 
