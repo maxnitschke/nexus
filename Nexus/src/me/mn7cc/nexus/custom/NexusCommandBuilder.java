@@ -6,16 +6,16 @@ import java.util.List;
 
 public class NexusCommandBuilder {
 	
+	private INexusCommand command;
 	private String label;
 	private List<String> aliases;
 	
-	private INexusCommand command;
 	private LinkedHashMap<String, INexusCommand> subCommands;
 	
-	public NexusCommandBuilder(String label, String... aliases) {
+	public NexusCommandBuilder(INexusCommand command, String label, String... aliases) {
+		this.command = command;
 		this.label = label;
 		this.aliases = Arrays.asList(aliases);
-		this.command = null;
 		this.subCommands = new LinkedHashMap<String, INexusCommand>();
 	}
 	
@@ -24,8 +24,9 @@ public class NexusCommandBuilder {
 		return this;
 	}
 	
-	public NexusCommandBuilder addSubCommand(String label, INexusCommand command) {
+	public NexusCommandBuilder addSubCommand(INexusCommand command, String label, String... aliases) {
 		this.subCommands.put(label, command);
+		for(String alias : aliases) this.subCommands.put(alias, command);
 		return this;
 	}
 	

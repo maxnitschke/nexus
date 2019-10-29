@@ -35,9 +35,8 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 	public void enableModule(Plugin plugin) {
 		
         CommandManager.registerCommand(
-        		new NexusCommandBuilder("warp", "waypoint")
-        		.setCommand(new CommandWarp())
-//        		.addSubCommand("create", new CommandWarpCreate())
+        		new NexusCommandBuilder(new CommandWarp(), "warp", "waypoint")
+        		.addSubCommand(new CommandWarpCreate(), "create", "c", "set", "s")
 //        		.addSubCommand("remove", new CommandWarpRemove())
 //        		.addSubCommand("list", new CommandWarpList())
         		.getNexusCommand());
@@ -94,6 +93,25 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 				else MessageUtils.send(player, Message.WARP_MESSAGE_DEFAULT, nexusWarp.getId(), player.getName());
 				
 			}
+			
+		}
+
+	}
+	
+	public static class CommandWarpCreate extends CommandModel implements INexusCommand {
+		
+		public CommandWarpCreate() {
+			super(true, "nexus.warp.create", "/warp create <id>",
+			new ArgumentModel(1, "<id>", Argument.Type.STRING));
+		}
+
+		@Override
+		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
+			
+			Player source = (Player) sender;
+			String id = content.getString(1).toLowerCase();
+			
+			
 			
 		}
 

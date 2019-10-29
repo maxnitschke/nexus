@@ -46,13 +46,11 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 		catch (InvalidTimeFormatException e) { e.printStackTrace(); }
 		
         CommandManager.registerCommand(
-        		new NexusCommandBuilder("tp", "teleport")
-        		.setCommand(new CommandTP())
+        		new NexusCommandBuilder(new CommandTP(), "tp", "teleport")
         		.getNexusCommand());
 		
         CommandManager.registerCommand(
-        		new NexusCommandBuilder("tphere", "teleporthere")
-        		.setCommand(new CommandTPHere())
+        		new NexusCommandBuilder(new CommandTPHere(), "tphere", "teleporthere")
         		.getNexusCommand());
         
 		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
