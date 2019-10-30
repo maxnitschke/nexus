@@ -12,7 +12,9 @@ import me.mn7cc.nexus.Database;
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
+import me.mn7cc.nexus.custom.NexusPlayer;
 import me.mn7cc.nexus.custom.NexusWarp;
+import me.mn7cc.nexus.event.NexusWarpSetEvent;
 import me.mn7cc.nexus.event.NexusWarpTeleportEvent;
 import me.mn7cc.nexus.util.CommandUtils;
 import me.mn7cc.nexus.util.EventUtils;
@@ -110,6 +112,19 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			
 			Player source = (Player) sender;
 			String id = content.getString(1).toLowerCase();
+			NexusPlayer nexusPlayer = Database.getPlayer(source);
+			int warpCount = nexusPlayer.getWarpCount();
+			int warpLimit = nexusPlayer.getWarpLimit();
+			
+			if(warpCount >= 1 && warpLimit <= 1) {
+				MessageUtils.send(sender, Message.INSUFFICIENT_PERMISSIONS_WARP_SET_MULTIPLE);
+				return;
+			}
+			
+			if(warpCount >= warpLimit) {
+				MessageUtils.send(sender, Message.WARP_LIMIT_REACHED, StringUtils.toString(warpCount), StringUtils.toString(warpLimit));
+				return;
+			}
 			
 			if(Database.getWarp(id) != null) {
 				MessageUtils.send(sender, Message.COMMAND_ERROR_WARP_ALREADY_EXISTS);
@@ -117,6 +132,9 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			}
 			
 			NexusWarp nexusWarp = new NexusWarp(id, source);
+			
+			if(EventUtils.isCancelled(new NexusWarpSetEvent(nexusWarp))) return;
+			
 			nexusWarp.insert();
 			
 			MessageUtils.send(sender, Message.WARP_CREATED, id);
@@ -128,7 +146,7 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 	public static class CommandWarpDelete extends CommandModel implements INexusCommand {
 		
 		public CommandWarpDelete() {
-			super(false, "nexus.warp.delete", "/warp delete <id>",
+			super(true, "nexus.warp.delete", "/warp delete <id>",
 			new ArgumentModel(1, "<id>", Argument.Type.STRING));
 		}
 
