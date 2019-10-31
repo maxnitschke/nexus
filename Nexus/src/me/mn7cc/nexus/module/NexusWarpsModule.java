@@ -14,6 +14,7 @@ import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
 import me.mn7cc.nexus.custom.NexusPlayer;
 import me.mn7cc.nexus.custom.NexusWarp;
+import me.mn7cc.nexus.event.NexusWarpDeleteEvent;
 import me.mn7cc.nexus.event.NexusWarpSetEvent;
 import me.mn7cc.nexus.event.NexusWarpTeleportEvent;
 import me.mn7cc.nexus.util.CommandUtils;
@@ -136,8 +137,10 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			if(EventUtils.isCancelled(new NexusWarpSetEvent(nexusWarp))) return;
 			
 			nexusWarp.insert();
+			nexusPlayer.setWarpCount(warpCount + 1);
+			nexusPlayer.update();
 			
-			MessageUtils.send(sender, Message.WARP_CREATED, id);
+			MessageUtils.send(sender, Message.WARP_SET, id);
 			
 		}
 
@@ -153,7 +156,10 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 		@Override
 		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
 			
+			Player source = (Player) sender;
 			String id = content.getString(1).toLowerCase();
+			NexusPlayer nexusPlayer = Database.getPlayer(source);
+			int warpCount = nexusPlayer.getWarpCount();
 			
 			NexusWarp nexusWarp = Database.getWarp(id);
 			
@@ -162,9 +168,15 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 				return;
 			}
 			
-			nexusWarp.delete();
+			if(!nexusWarp.isOwner(source.getUniqueId().toString()) && !CommandUtils.hasPermission(sender, "nexus.warp.others", Message.INSUFFICIENT_PERMISSIONS_WARP_OTHERS)) return;
 			
-			MessageUtils.send(sender, Message.WARP_REMOVED, id);
+			if(EventUtils.isCancelled(new NexusWarpDeleteEvent(nexusWarp))) return;
+			
+			nexusWarp.delete();
+			nexusPlayer.setWarpCount(warpCount - 1);
+			nexusPlayer.update();
+			
+			MessageUtils.send(sender, Message.WARP_DELETED, id);
 			
 		}
 

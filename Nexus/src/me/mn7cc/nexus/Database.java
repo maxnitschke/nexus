@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -345,21 +347,22 @@ public class Database {
 	}
 	
 	private static HashMap<String, NexusPlayer> players = new HashMap<String, NexusPlayer>();
-	public static void addPlayer(NexusPlayer player) {
-		players.put(player.getUUID(), player);
-		players.put(player.getName(), player);
-	}
-	public static void removePlayer(NexusPlayer player) {
-		players.remove(player.getUUID());
-		players.remove(player.getName());
-	}
+	public static void addPlayer(NexusPlayer player) { players.put(player.getUUID(), player); players.put(player.getName(), player); }
+	public static void removePlayer(NexusPlayer player) { players.remove(player.getUUID()); players.remove(player.getName()); }
 	public static void removePlayer(String key) { players.remove(key); }
 	public static HashMap<String, NexusPlayer> getPlayers() { return players; }
 	
 	private static HashMap<String, NexusWarp> warps = new HashMap<String, NexusWarp>();
 	public static void addWarp(NexusWarp warp) { warps.put(warp.getId(), warp); }
+	public static void removeWarp(NexusWarp warp) { warps.remove(warp.getId()); }
 	public static void removeWarp(String id) { warps.remove(id); }
 	public static HashMap<String, NexusWarp> getWarps() { return warps; }
-
+	
+	public static TreeSet<String> warpIdSet = new TreeSet<String>();
+	public static void addWarpIdToSet(NexusWarp warp) { warpIdSet.add(warp.getId()); }
+	public static void removeWarpIdFromSet(NexusWarp warp) { warpIdSet.remove(warp.getId()); }
+	public static void removeWarpIdFromSet(String id) { warpIdSet.remove(id); }
+	public static TreeSet<String> getWarpIdSet() { return warpIdSet; }
+	
 }
 	
