@@ -1,4 +1,4 @@
-package me.mn7cc.nexus;
+package me.mn7cc.nexus.custom;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.Location;
 
-import me.mn7cc.nexus.custom.AccessList;
 import me.mn7cc.nexus.util.Base64Utils;
 
 public class Encoder {

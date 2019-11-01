@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
+import me.mn7cc.nexus.NexusFileManager;
 import me.mn7cc.nexus.custom.Message;
 
 public class MessagesFile extends BaseFile {
 	
-	public MessagesFile() {
-		super(getBaseResource(), getBaseFile(), getBaseDefaults());
+	public MessagesFile(NexusFileManager fileManager) {
+		super(fileManager, getBaseResource(), getBaseFile(), getBaseDefaults());
 	}
 	
 	private static String getBaseResource() {

@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.mn7cc.nexus.custom.FileManager;
+import me.mn7cc.nexus.NexusFileManager;
 import me.mn7cc.nexus.custom.Message;
 import me.mn7cc.nexus.file.MessagesFile;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -47,10 +47,9 @@ public class MessageUtils {
 		
 	}
 	
-	public static void loadMessages() {
+	public static void loadMessages(MessagesFile messagesFile) {
 		
-		MessagesFile messages = FileManager.getMessagesFile();
-		for(Entry<String, String> entry : messages.getMessages().entrySet()) addMessage(entry.getKey(), entry.getValue());
+		for(Entry<String, String> entry : messagesFile.getMessages().entrySet()) addMessage(entry.getKey(), entry.getValue());
 		
 	}
 	

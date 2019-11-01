@@ -1,6 +1,5 @@
 package me.mn7cc.nexus.custom;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -9,17 +8,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import me.mn7cc.nexus.exception.NexusCommandException;
+import me.mn7cc.nexus.Nexus;
 import me.mn7cc.nexus.exception.InvalidCommandModelException;
 import me.mn7cc.nexus.util.MessageUtils;
 
 public class NexusCommand extends Command {
 
+	private Nexus instance;
 	private INexusCommand command;
 	private LinkedHashMap<String, INexusCommand> subCommands;
 	
-	public NexusCommand(String label, List<String> aliases, INexusCommand command, LinkedHashMap<String, INexusCommand> subCommands) {
+	public NexusCommand(Nexus instance, String label, List<String> aliases, INexusCommand command, LinkedHashMap<String, INexusCommand> subCommands) {
 		super(label);
 		setAliases(aliases);
+		this.instance = instance;
 		this.command = command;
 		this.subCommands = subCommands;
 	}
@@ -28,12 +30,18 @@ public class NexusCommand extends Command {
 	public boolean execute(CommandSender sender, String label, String[] args) {
 		
 		INexusCommand command = getCommand(args);
+		
+		if(command == null) {
+			showHelp(sender);
+			return true;
+		}
+		
 		CommandModel model = getModel(command);
 		CommandContent content;
 		
 		try {
 			
-			content =  new CommandContent(sender, label, args, model);
+			content =  new CommandContent(instance, sender, label, args, model);
 			command.execute(sender, label, args, content);
 			
 		}

@@ -1,13 +1,19 @@
 package me.mn7cc.nexus.task;
 
-import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.NexusDatabase;
 
 public class DatabaseHeartbeatTask implements Runnable {
+	
+	private NexusDatabase database;
+	
+	public DatabaseHeartbeatTask(NexusDatabase database) {
+		this.database = database;
+	}
 	
 	@Override
 	public void run() {
 		
-		if(!Database.isClosed()) Database.heartbeat();
+		if(!database.isClosed()) database.heartbeat();
 		
 	}
 

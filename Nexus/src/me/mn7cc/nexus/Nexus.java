@@ -1,54 +1,71 @@
 package me.mn7cc.nexus;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.mn7cc.nexus.custom.CommandManager;
-import me.mn7cc.nexus.custom.FileManager;
-import me.mn7cc.nexus.custom.ModuleManager;
 import me.mn7cc.nexus.listener.AsyncPlayerChatListener;
+import me.mn7cc.nexus.listener.PlayerJoinListener;
 import me.mn7cc.nexus.listener.PlayerKickListener;
 import me.mn7cc.nexus.listener.PlayerQuitListener;
+import me.mn7cc.nexus.task.DatabaseHeartbeatTask;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.VaultUtils;
 
 public class Nexus extends JavaPlugin {
-
-	private static Plugin plugin;
-	public static Plugin getPlugin() { return plugin; }
+	
+	private NexusFileManager fileManager;
+	private NexusCommandManager commandManager;
+	private NexusModuleManager moduleManager;
+	private NexusSettings settings;
+	private NexusDatabase database;
+	private NexusNetworkData networkData;
+	
+	public NexusSettings getSettings() { return settings; }
+	public NexusCommandManager getCommandManager() { return commandManager; }
+	public NexusFileManager getFileManager() { return fileManager; }
+	public NexusModuleManager getModuleManager() { return moduleManager; }
+	public NexusDatabase getDatabase() { return database; }
+	public NexusNetworkData getNetworkData() { return networkData; }
 	
 	@Override
 	public void onEnable() {
 		
-		plugin = this;
+		fileManager = new NexusFileManager(this);
+		fileManager.loadFiles();
 		
-		FileManager.loadFiles();
-		MessageUtils.loadMessages();
+		MessageUtils.loadMessages(fileManager.getMessagesFile());
+		
+		commandManager = new NexusCommandManager();
+		commandManager.loadCommands();
+		
+		moduleManager = new NexusModuleManager(this, fileManager.getModulesFile());
+		moduleManager.loadModules();
+		
+		Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new PlayerKickListener(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
+		
+		settings = new NexusSettings(false, this);
+		
+		database = new NexusDatabase(settings);
+		database.load();
+		
+		networkData = new NexusNetworkData();
+		
+    	Bukkit.getServer().getScheduler().runTaskTimer(this, new DatabaseHeartbeatTask(database), 4L, 4L);
 		
 		VaultUtils.setupVault();
-		
-		CommandManager.loadCommands();
-		ModuleManager.loadModules();
-		
-		Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(), this);
-		Bukkit.getServer().getPluginManager().registerEvents(new PlayerKickListener(), this);
-		Bukkit.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
-		
-		Database.setup();
-		Database.load();
-		
-//    	Bukkit.getServer().getScheduler().runTaskTimer(this, new DatabaseHeartbeatTask(), 5L, 5L);
-		
+    	
 	}
 	
 	@Override
 	public void onDisable() {
 		
-		if(!Database.isClosed()) Database.heartbeat();
+		if(!database.isClosed()) database.heartbeat();
 		
-		Database.close();
+		database.close();
 		
 	}
-    
+	
 }

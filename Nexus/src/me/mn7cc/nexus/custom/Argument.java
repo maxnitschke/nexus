@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.exception.NexusCommandException;
-import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.NexusDatabase;
 import me.mn7cc.nexus.exception.InvalidCommandModelException;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.ServerUtils;
@@ -59,7 +59,7 @@ public class Argument extends ArgumentData {
 		this.optional = optional;
 	}
 
-	public void setGivenArgument(String givenArgument) throws NexusCommandException, InvalidCommandModelException {
+	public void setGivenArgument(String givenArgument, NexusDatabase database) throws NexusCommandException, InvalidCommandModelException {
 		
 		this.givenArgument = givenArgument;
 		
@@ -117,7 +117,7 @@ public class Argument extends ArgumentData {
 		}
 		else if(requiredType == Type.NEXUS_PLAYER) {
 			
-			NexusPlayer nexusPlayer = Database.getPlayerByName(givenArgument);
+			NexusPlayer nexusPlayer = NexusPlayer.fromDatabaseByName(database, givenArgument);
 			if(nexusPlayer == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
 			setNexusPlayer(nexusPlayer);
 			return;
@@ -125,7 +125,7 @@ public class Argument extends ArgumentData {
 		}
 		else if(requiredType == Type.NEXUS_WARP) {
 			
-			NexusWarp nexusWarp = Database.getWarp(givenArgument);
+			NexusWarp nexusWarp = NexusWarp.fromDatabase(database, givenArgument);
 			if(nexusWarp == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_WARP_NOT_FOUND));
 			setNexusWarp(nexusWarp);
 			return;

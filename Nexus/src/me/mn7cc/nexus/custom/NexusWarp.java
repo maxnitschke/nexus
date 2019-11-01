@@ -1,7 +1,9 @@
 package me.mn7cc.nexus.custom;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,13 +13,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import me.mn7cc.nexus.Database;
-import me.mn7cc.nexus.Decoder;
-import me.mn7cc.nexus.Encoder;
+import me.mn7cc.nexus.NexusDatabase;
 
 public class NexusWarp {
 	
 	private String id;
+	private String server;
 	private String world;
 	private double x;
 	private double y;
@@ -33,11 +34,12 @@ public class NexusWarp {
 	
 	private PendingDatabaseUpdates pendingDatabaseUpdates;
 
-	public NexusWarp(String id, Player player) {
+	public NexusWarp(String id, String server, Player player) {
 		
 		Location location = player.getLocation();
 		
 		this.id = id;
+		this.server = server;
 		this.world = player.getWorld().getUID().toString();
 		this.x = location.getX();
 		this.y = location.getY();
@@ -53,9 +55,10 @@ public class NexusWarp {
 		
 	}
 	
-	public NexusWarp(String id, String world, double x, double y, double z, float yaw, float pitch, String owner, List<String> members, boolean priv, AccessList invited, String message) {
+	public NexusWarp(String id, String server, String world, double x, double y, double z, float yaw, float pitch, String owner, List<String> members, boolean priv, AccessList invited, AccessList banned, String message) {
 		
 		this.id = id;
+		this.server = server;
 		this.world = world;
 		this.x = x;
 		this.y = y;
@@ -80,6 +83,7 @@ public class NexusWarp {
 			if(resultSet.next()) {
 		
 				this.id = resultSet.getString("id");
+				this.server = resultSet.getString("server");
 				this.world = resultSet.getString("world");
 				this.x = resultSet.getDouble("x");
 				this.y = resultSet.getDouble("y");
@@ -103,6 +107,7 @@ public class NexusWarp {
 	}
 	
 	public void setId(String id) { this.id = id; pendingDatabaseUpdates.addUpdate("id", id); }
+	public void setServer(String server) { this.server = server; pendingDatabaseUpdates.addUpdate("server", server); }
 	public void setWorld(String world) { this.world = world; pendingDatabaseUpdates.addUpdate("world", world); }
 	public void setX(double x) { this.x = x; pendingDatabaseUpdates.addUpdate("x", x); }
 	public void setY(double y) { this.y = y; pendingDatabaseUpdates.addUpdate("y", y); }
@@ -117,6 +122,7 @@ public class NexusWarp {
 	public void setMessage(String message) { this.message = message; pendingDatabaseUpdates.addUpdate("message", message); }
 	
 	public String getId() { return id; }
+	public String getServer() { return server; }
 	public String getWorld() { return world; }
 	public double getX() { return x; }
 	public double getY() { return y; }
@@ -137,8 +143,8 @@ public class NexusWarp {
 		return members.contains(uuid);
 	}
 	
-	public boolean isInvited(Player player) {
-		return invited.hasAccess(player);
+	public boolean isInvited(NexusPlayer nexusPlayer) {
+		return invited.hasAccess(nexusPlayer);
 	}
 	
 	public boolean hasMessage() {
@@ -188,19 +194,49 @@ public class NexusWarp {
 		player.teleport(getLocation());
 	}
 	
-	public void insert() {
-		Database.queue("INSERT INTO " + Database.TABLE_ID_WARP + " VALUES ('" + id + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', priv, '" + Encoder.ACCESS_LIST(invited) + "', '" + Encoder.ACCESS_LIST(banned) + "', '" + message + "')");
-		Database.addWarp(this);
+	public void insert(NexusDatabase database) {
+		database.queue("INSERT INTO " + database.getSettings().getDatabaseWarpTableId() + " VALUES ('" + id + "', '" + server + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', priv, '" + Encoder.ACCESS_LIST(invited) + "', '" + Encoder.ACCESS_LIST(banned) + "', '" + message + "')");
+		database.getCache().addWarp(this);
 	}
 	
-	public void update() {
-		Database.queue("UPDATE " + Database.TABLE_ID_WARP + " SET " + pendingDatabaseUpdates.getSQLString() + " WHERE id = '" + id + "'");
-		Database.addWarp(this);
+	public void update(NexusDatabase database) {
+		database.queue("UPDATE " + database.getSettings().getDatabaseWarpTableId() + " SET " + pendingDatabaseUpdates.getSQLString() + " WHERE id = '" + id + "' AND server = '" + server + "'");
+		database.getCache().addWarp(this);
 	}
 	
-	public void delete() {
-		Database.queue("DELETE FROM " + Database.TABLE_ID_WARP + " WHERE id = '" + id + "'");
-		Database.removeWarp(id);
+	public void delete(NexusDatabase database) {
+		database.queue("DELETE FROM " + database.getSettings().getDatabaseWarpTableId() + " WHERE id = '" + id + "' AND server = '" + server + "'");
+		database.getCache().removeWarp(id);
+	}
+	
+	public static NexusWarp fromDatabase(NexusDatabase database, String id) {
+		
+		if(database.getCache().containsWarp(id)) return database.getCache().getWarp(id);
+		
+		NexusWarp nexusWarp = null;
+		
+		try {
+			
+			Connection connection = database.getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabaseWarpTableId() + " WHERE id = '" + id + "'");
+			
+			if(!resultSet.isBeforeFirst()) return null;
+			
+			nexusWarp = new NexusWarp(resultSet);
+			
+			resultSet.close();
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(!database.getSettings().isProxy()) database.getCache().addWarp(nexusWarp);
+		
+		return nexusWarp;
+		
 	}
 	
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.entity.Player;
 
-import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.NexusDatabase;
 
 public class AccessList {
 	
@@ -28,13 +28,11 @@ public class AccessList {
 		this.permissions = permissions;
 	}
 	
-	public boolean hasAccess(Player player) {
+	public boolean hasAccess(NexusPlayer nexusPlayer) {
 		
-		NexusPlayer nexusPlayer = Database.getPlayer(player);
-
 		if(users.contains(nexusPlayer.getUUID())) return true;
 		for(String group : nexusPlayer.getGroups()) if(groups.contains(group)) return true;
-		for(String permission : permissions) if(player.hasPermission(permission)) return true;
+		for(String permission : permissions) if(nexusPlayer.getSession() != null && nexusPlayer.getSession().getPlayer().hasPermission(permission)) return true;
 		
 		return false;
 		

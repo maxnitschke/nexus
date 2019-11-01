@@ -6,22 +6,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
-import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.Nexus;
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
 import me.mn7cc.nexus.custom.NexusPlayer;
-import me.mn7cc.nexus.exception.InvalidTimeFormatException;
 import me.mn7cc.nexus.util.CommandUtils;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.StringUtils;
-import me.mn7cc.nexus.util.TimeUtils;
 import me.mn7cc.nexus.custom.CommandContent;
-import me.mn7cc.nexus.custom.CommandManager;
 import me.mn7cc.nexus.custom.CommandModel;
-import me.mn7cc.nexus.custom.FileManager;
 import me.mn7cc.nexus.custom.NexusCommandBuilder;
 import me.mn7cc.nexus.custom.INexusCommand;
 import me.mn7cc.nexus.custom.INexusModule;
@@ -29,40 +24,45 @@ import me.mn7cc.nexus.custom.Message;
 
 public class NexusTeleportationModule extends NexusModule implements INexusModule, Listener {
 	
-	private static double TELEPORT_REQUEST_TIMEOUT;
-	private static double TELEPORT_DELAY;
-	
-	public NexusTeleportationModule(boolean enabled) {
-		super(enabled);
+	public NexusTeleportationModule(Nexus instance, boolean enabled) {
+		super(instance, enabled);
 	}
 	
 	@Override
-	public void enableModule(Plugin plugin) {
+	public void enableModule() {
 		
-		try {
-			TELEPORT_REQUEST_TIMEOUT = TimeUtils.parseTime(FileManager.getModulesFile().getTeleportationTeleportRequestTimeout());
-			TELEPORT_DELAY = TimeUtils.parseTime(FileManager.getModulesFile().getTeleportationTeleportDelay());
-		}
-		catch (InvalidTimeFormatException e) { e.printStackTrace(); }
+		Nexus instance = getNexusInstance();
 		
-        CommandManager.registerCommand(
-        		new NexusCommandBuilder(new CommandTP(), "tp", "teleport")
+		instance.getCommandManager().registerCommand(
+        		new NexusCommandBuilder(instance)
+        		.setCommand(new CommandTP(), "tp", "teleport")
         		.getNexusCommand());
 		
-        CommandManager.registerCommand(
-        		new NexusCommandBuilder(new CommandTPHere(), "tphere", "teleporthere")
+        instance.getCommandManager().registerCommand(
+        		new NexusCommandBuilder(instance)
+        		.setCommand(new CommandTPHere(), "tphere", "tph", "summon")
         		.getNexusCommand());
         
-		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+        instance.getCommandManager().registerCommand(
+        		new NexusCommandBuilder(instance)
+        		.setCommand(new CommandTPA(), "tpa", "tpr")
+        		.getNexusCommand());
+        
+        instance.getCommandManager().registerCommand(
+        		new NexusCommandBuilder(instance)
+        		.setCommand(new CommandTPAHere(), "tpahere", "tprhere")
+        		.getNexusCommand());
+        
+		Bukkit.getServer().getPluginManager().registerEvents(this, instance);
 		
 	}
 
 	@Override
-	public void disableModule(Plugin plugin) {
+	public void disableModule() {
 		
 	}
 	
-	public static class CommandTP extends CommandModel implements INexusCommand {
+	private class CommandTP extends CommandModel implements INexusCommand {
 		
 		public CommandTP() {
 			super(true, "nexus.tp", "/tp <player(s)> [target]",
@@ -108,7 +108,7 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 
 	}
 	
-	public static class CommandTPHere extends CommandModel implements INexusCommand {
+	private class CommandTPHere extends CommandModel implements INexusCommand {
 		
 		public CommandTPHere() {
 			super(true, "nexus.tphere", "/tphere <player(s)>",
@@ -135,7 +135,7 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 
 	}
 	
-	public static class CommandTPA extends CommandModel implements INexusCommand {
+	private class CommandTPA extends CommandModel implements INexusCommand {
 		
 		public CommandTPA() {
 			super(true, "nexus.tpa", "/tpa <player>",
@@ -145,6 +145,7 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 		@Override
 		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
 			
+			Nexus instance = getNexusInstance();
 			Player source = (Player) sender;
 			Player player = content.getPlayer(0);
 
@@ -153,14 +154,14 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 				return;
 			}
 			
-			NexusPlayer nexusPlayer = Database.getPlayer(player);
+			NexusPlayer nexusPlayer = NexusPlayer.fromDatabase(instance.getDatabase(), player);
 			
 			if(nexusPlayer.getSession().hasTPARequest(source) || nexusPlayer.getSession().hasTPAHereRequest(source)) {
 				MessageUtils.send(source, Message.TELEPORT_REQUEST_STILL_PENDING);
 				return;
 			}
 			
-			nexusPlayer.getSession().addTPARequest(source, System.currentTimeMillis() + TELEPORT_REQUEST_TIMEOUT);
+			nexusPlayer.getSession().addTPARequest(source, System.currentTimeMillis() + instance.getSettings().getTeleportRequestTimeout());
 			
 			MessageUtils.send(source, Message.TELEPORT_REQUEST_SENT, player.getName());
 			MessageUtils.send(player, Message.TELEPORT_REQUEST, source.getName());
@@ -169,7 +170,7 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 
 	}
 	
-	public static class CommandTPAHere extends CommandModel implements INexusCommand {
+	private class CommandTPAHere extends CommandModel implements INexusCommand {
 		
 		public CommandTPAHere() {
 			super(true, "nexus.tpahere", "/tpahere <player>",
@@ -179,6 +180,7 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 		@Override
 		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
 			
+			Nexus instance = getNexusInstance();
 			Player source = (Player) sender;
 			Player player = content.getPlayer(0);
 
@@ -187,14 +189,14 @@ public class NexusTeleportationModule extends NexusModule implements INexusModul
 				return;
 			}
 			
-			NexusPlayer nexusPlayer = Database.getPlayer(player);
+			NexusPlayer nexusPlayer = NexusPlayer.fromDatabase(instance.getDatabase(), player);
 			
 			if(nexusPlayer.getSession().hasTPARequest(source) || nexusPlayer.getSession().hasTPAHereRequest(source)) {
 				MessageUtils.send(source, Message.TELEPORT_REQUEST_STILL_PENDING);
 				return;
 			}
 			
-			nexusPlayer.getSession().addTPAHereRequest(source, System.currentTimeMillis() + TELEPORT_REQUEST_TIMEOUT);
+			nexusPlayer.getSession().addTPAHereRequest(source, System.currentTimeMillis() + instance.getSettings().getTeleportRequestTimeout());
 			
 			MessageUtils.send(source, Message.TELEPORT_REQUEST_SENT, player.getName());
 			MessageUtils.send(player, Message.TELEPORT_REQUEST_HERE, source.getName());

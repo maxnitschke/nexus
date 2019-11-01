@@ -6,7 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.Nexus;
+import me.mn7cc.nexus.NexusDatabase;
 import me.mn7cc.nexus.custom.Message;
 import me.mn7cc.nexus.custom.NexusPlayer;
 import me.mn7cc.nexus.util.MessageUtils;
@@ -14,21 +15,29 @@ import me.mn7cc.nexus.util.PlayerUtils;
 
 public class PlayerJoinListener implements Listener {
 	
+	private Nexus instance;
+	
+	public PlayerJoinListener(Nexus instance) {
+		this.instance = instance;
+	}
+	
 	@EventHandler (priority = EventPriority.LOWEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
  		
+		NexusDatabase database = instance.getDatabase();
+		
     	Player player = event.getPlayer();
     	
 		String uuid = player.getUniqueId().toString();
 		String name = player.getName().toLowerCase();
 		
-		NexusPlayer nexusPlayerByUUID = Database.getPlayerByUUID(uuid);
-		NexusPlayer nexusPlayerByName = Database.getPlayerByName(name);
+		NexusPlayer nexusPlayerByUUID = NexusPlayer.fromDatabaseByUUID(database, uuid);
+		NexusPlayer nexusPlayerByName = NexusPlayer.fromDatabaseByName(database, name);
 		
 		if(nexusPlayerByUUID == null && nexusPlayerByName == null) {
 			
 			NexusPlayer nexusPlayer = new NexusPlayer(player);
-			nexusPlayer.insert();
+			nexusPlayer.insert(database);
 			
 			event.setJoinMessage(null);
 			MessageUtils.broadcast(Message.PLAYER_JOINED_FIRST, player.getName());
@@ -36,14 +45,14 @@ public class PlayerJoinListener implements Listener {
 		}
 		else if(nexusPlayerByUUID == null && nexusPlayerByName != null) {
 			
-			Database.removePlayer(nexusPlayerByName.getUUID());
-			Database.removePlayer(nexusPlayerByName.getName());
+			database.getCache().removePlayer(nexusPlayerByName.getUUID());
+			database.getCache().removePlayer(nexusPlayerByName.getName());
 			
 			nexusPlayerByName.setName(nexusPlayerByName.getUUID());
-			nexusPlayerByName.update();
+			nexusPlayerByName.update(database);
 			
 			NexusPlayer nexusPlayer = new NexusPlayer(player);
-			nexusPlayer.insert();
+			nexusPlayer.insert(database);
 			
 			event.setJoinMessage(null);
 			MessageUtils.broadcast(Message.PLAYER_JOINED_FIRST, player.getName());
@@ -54,11 +63,11 @@ public class PlayerJoinListener implements Listener {
 			String oldName = nexusPlayerByUUID.getLastName();
 			String newName = player.getName();
 			
-			Database.removePlayer(nexusPlayerByUUID.getUUID());
-			Database.removePlayer(nexusPlayerByUUID.getName());
+			database.getCache().removePlayer(nexusPlayerByUUID.getUUID());
+			database.getCache().removePlayer(nexusPlayerByUUID.getName());
 			
 			nexusPlayerByUUID.setName(name);
-			nexusPlayerByUUID.update();
+			nexusPlayerByUUID.update(database);
 			
 			event.setJoinMessage(null);
 			MessageUtils.broadcast(Message.PLAYER_JOINED_NEW_NAME, oldName, newName);
@@ -66,10 +75,10 @@ public class PlayerJoinListener implements Listener {
 		}
 		else {
 
-	    	NexusPlayer nexusPlayer = Database.getPlayer(player);
+	    	NexusPlayer nexusPlayer = NexusPlayer.fromDatabase(database, player);
 	    	nexusPlayer.setLastAccountName(player.getName());
 	    	nexusPlayer.setIPAddress(PlayerUtils.getIP(player));
-	    	nexusPlayer.update();
+	    	nexusPlayer.update(database);
 			
 			event.setJoinMessage(MessageUtils.getMessage(Message.PLAYER_JOINED, player.getName()));
 			

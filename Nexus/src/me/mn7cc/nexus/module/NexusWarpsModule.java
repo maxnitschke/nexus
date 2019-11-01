@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import me.mn7cc.nexus.Database;
+import me.mn7cc.nexus.Nexus;
+import me.mn7cc.nexus.NexusCommandManager;
+import me.mn7cc.nexus.NexusDatabase;
 import me.mn7cc.nexus.custom.Argument;
 import me.mn7cc.nexus.custom.ArgumentModel;
 import me.mn7cc.nexus.custom.NexusModule;
@@ -22,7 +24,6 @@ import me.mn7cc.nexus.util.EventUtils;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.StringUtils;
 import me.mn7cc.nexus.custom.CommandContent;
-import me.mn7cc.nexus.custom.CommandManager;
 import me.mn7cc.nexus.custom.CommandModel;
 import me.mn7cc.nexus.custom.NexusCommandBuilder;
 import me.mn7cc.nexus.custom.INexusCommand;
@@ -31,29 +32,32 @@ import me.mn7cc.nexus.custom.Message;
 
 public class NexusWarpsModule extends NexusModule implements INexusModule, Listener {
 	
-	public NexusWarpsModule(boolean enabled) {
-		super(enabled);
+	public NexusWarpsModule(Nexus instance, boolean enabled) {
+		super(instance, enabled);
 	}
 	
 	@Override
-	public void enableModule(Plugin plugin) {
+	public void enableModule() {
 		
-        CommandManager.registerCommand(
-        		new NexusCommandBuilder(new CommandWarp(), "warp", "waypoint")
-        		.addSubCommand(new CommandWarpSet(), "set", "s", "create", "c")
+		Nexus instance = getNexusInstance();
+		
+        instance.getCommandManager().registerCommand(
+        		new NexusCommandBuilder(instance)
+        		.setCommand(new CommandWarp(), "warp", "waypoint")
+        		.addSubCommand(new CommandWarpSet(), "set", "s", "create", "c", "new", "n")
         		.addSubCommand(new CommandWarpDelete(), "delete", "del", "d", "remove", "rem", "r")
         		.getNexusCommand());
 		
-		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+		Bukkit.getServer().getPluginManager().registerEvents(this, instance);
 		
 	}
 
 	@Override
-	public void disableModule(Plugin plugin) {
+	public void disableModule() {
 		
 	}
 	
-	public static class CommandWarp extends CommandModel implements INexusCommand {
+	private class CommandWarp extends CommandModel implements INexusCommand {
 		
 		public CommandWarp() {
 			super(true, "nexus.warp", "/warp <warp> [players]",
@@ -70,7 +74,7 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			
 			if(players == null) {
 				
-				if(EventUtils.isCancelled(new NexusWarpTeleportEvent(source, nexusWarp))) return;
+				if(EventUtils.isCancelled(new NexusWarpTeleportEvent(nexusWarp, source))) return;
 				
 				nexusWarp.spawnPlayer(source);
 				
@@ -88,7 +92,7 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			
 			for(Player player : players) {
 				
-				if(EventUtils.isCancelled(new NexusWarpTeleportEvent(player, nexusWarp))) continue;
+				if(EventUtils.isCancelled(new NexusWarpTeleportEvent(nexusWarp, player))) continue;
 				
 				nexusWarp.spawnPlayer(player);
 				
@@ -101,7 +105,7 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 
 	}
 	
-	public static class CommandWarpSet extends CommandModel implements INexusCommand {
+	private class CommandWarpSet extends CommandModel implements INexusCommand {
 		
 		public CommandWarpSet() {
 			super(true, "nexus.warp.set", "/warp set <id>",
@@ -111,9 +115,10 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 		@Override
 		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
 			
+			Nexus instance = getNexusInstance();
 			Player source = (Player) sender;
 			String id = content.getString(1).toLowerCase();
-			NexusPlayer nexusPlayer = Database.getPlayer(source);
+			NexusPlayer nexusPlayer = NexusPlayer.fromDatabase(instance.getDatabase(), source);
 			int warpCount = nexusPlayer.getWarpCount();
 			int warpLimit = nexusPlayer.getWarpLimit();
 			
@@ -127,18 +132,18 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 				return;
 			}
 			
-			if(Database.getWarp(id) != null) {
+			if(NexusWarp.fromDatabase(instance.getDatabase(), id) != null) {
 				MessageUtils.send(sender, Message.COMMAND_ERROR_WARP_ALREADY_EXISTS);
 				return;
 			}
 			
-			NexusWarp nexusWarp = new NexusWarp(id, source);
+			NexusWarp nexusWarp = new NexusWarp(id, instance.getSettings().getServerId(), source);
 			
 			if(EventUtils.isCancelled(new NexusWarpSetEvent(nexusWarp))) return;
 			
-			nexusWarp.insert();
+			nexusWarp.insert(instance.getDatabase());
 			nexusPlayer.setWarpCount(warpCount + 1);
-			nexusPlayer.update();
+			nexusPlayer.update(instance.getDatabase());
 			
 			MessageUtils.send(sender, Message.WARP_SET, id);
 			
@@ -146,7 +151,7 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 
 	}
 	
-	public static class CommandWarpDelete extends CommandModel implements INexusCommand {
+	private class CommandWarpDelete extends CommandModel implements INexusCommand {
 		
 		public CommandWarpDelete() {
 			super(true, "nexus.warp.delete", "/warp delete <id>",
@@ -156,12 +161,13 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 		@Override
 		public void execute(CommandSender sender, String label, String[] args, CommandContent content) {
 			
+			Nexus instance = getNexusInstance();
 			Player source = (Player) sender;
 			String id = content.getString(1).toLowerCase();
-			NexusPlayer nexusPlayer = Database.getPlayer(source);
+			NexusPlayer nexusPlayer = NexusPlayer.fromDatabase(instance.getDatabase(), source);
 			int warpCount = nexusPlayer.getWarpCount();
 			
-			NexusWarp nexusWarp = Database.getWarp(id);
+			NexusWarp nexusWarp = NexusWarp.fromDatabase(instance.getDatabase(), id);
 			
 			if(nexusWarp == null) {
 				MessageUtils.send(sender, Message.COMMAND_ERROR_WARP_NOT_FOUND);
@@ -172,9 +178,9 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			
 			if(EventUtils.isCancelled(new NexusWarpDeleteEvent(nexusWarp))) return;
 			
-			nexusWarp.delete();
+			nexusWarp.delete(instance.getDatabase());
 			nexusPlayer.setWarpCount(warpCount - 1);
-			nexusPlayer.update();
+			nexusPlayer.update(instance.getDatabase());
 			
 			MessageUtils.send(sender, Message.WARP_DELETED, id);
 			

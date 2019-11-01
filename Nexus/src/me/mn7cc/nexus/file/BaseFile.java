@@ -10,18 +10,18 @@ import java.util.Map.Entry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import me.mn7cc.nexus.custom.FileManager;
+import me.mn7cc.nexus.NexusFileManager;
 
 public class BaseFile {
 	
     private File file;
     private FileConfiguration data;
 
-    public BaseFile(String resource, File file, LinkedHashMap<String, Object> defaults) {
+    public BaseFile(NexusFileManager fileManager, String resource, File file, LinkedHashMap<String, Object> defaults) {
     	
     	this.file = file;
     	
-		if(!file.exists()) FileManager.copyFile(resource, file);
+		if(!file.exists()) fileManager.copyFile(resource, file);
 		
 		try { data = YamlConfiguration.loadConfiguration(file); }
         catch (IllegalArgumentException e) { data = new YamlConfiguration(); }

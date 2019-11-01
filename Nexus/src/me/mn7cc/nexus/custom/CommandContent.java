@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.mn7cc.nexus.exception.NexusCommandException;
+import me.mn7cc.nexus.Nexus;
 import me.mn7cc.nexus.exception.InvalidCommandModelException;
 import me.mn7cc.nexus.util.MessageUtils;
 import me.mn7cc.nexus.util.StringUtils;
@@ -29,7 +30,7 @@ public class CommandContent {
 	public String getPermission() { return permission; }
 	public String getUsage() { return usage; }
 	
-	public CommandContent(CommandSender sender, String label, String[] args, CommandModel model) throws NexusCommandException, InvalidCommandModelException {
+	public CommandContent(Nexus instance, CommandSender sender, String label, String[] args, CommandModel model) throws NexusCommandException, InvalidCommandModelException {
 		
 		this.sender = sender;
 		this.label = label;
@@ -68,7 +69,7 @@ public class CommandContent {
 			
 			try {
 				
-				argument.setGivenArgument(argument.getRequiredType().doesAcceptRemainingArguments() ? StringUtils.combineArguments(index, args) : args[index]);
+				argument.setGivenArgument(argument.getRequiredType().doesAcceptRemainingArguments() ? StringUtils.combineArguments(index, args) : args[index], instance.getDatabase());
 			
 			}
 			catch (NexusCommandException e) {

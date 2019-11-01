@@ -1,7 +1,9 @@
 package me.mn7cc.nexus.custom;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,9 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import me.mn7cc.nexus.Database;
-import me.mn7cc.nexus.Decoder;
-import me.mn7cc.nexus.Encoder;
+import me.mn7cc.nexus.NexusDatabase;
 import me.mn7cc.nexus.util.PlayerUtils;
 import me.mn7cc.nexus.util.StringUtils;
 import me.mn7cc.nexus.util.VaultUtils;
@@ -187,8 +187,8 @@ public class NexusPlayer {
 	public List<String> getFriends() { return friends; }
 	public List<String> getBlocked() { return blocked; }
 	public double getGodMode() { return mode_god; }
-	public double getFlymode() { return mode_fly; }
-	public double getSpymode() { return mode_spy; }
+	public double getFlyMode() { return mode_fly; }
+	public double getSpyMode() { return mode_spy; }
 	public double getInvisible() { return mode_invisible; }
 	public double getTeleportable() { return mode_teleportable; }
 	public double getJoinedTime() { return time_joined; }
@@ -286,23 +286,123 @@ public class NexusPlayer {
 		
 	}
 	
-	public void insert() {
-		Database.queue("INSERT INTO " + Database.TABLE_ID_PLAYER + " VALUES ('" + uuid + "', '" + name + "', '" + name_last + "', '" + ip + "', '" + nick + "', '" + channel + "', '" + Encoder.STRING_LIST(mails) + "', '" + Encoder.STRING_LIST(friends) + "', '" + Encoder.STRING_LIST(blocked) + "', " + mode_god + ", " + mode_fly + ", " + mode_spy + ", " + mode_invisible + ", " + mode_teleportable + ", " + time_joined + ", " + time_online + ", " + time_login + ", " + time_logout + ", '" + Encoder.LOCATION(location_death) + "', '" + Encoder.LOCATION(location_logout) + "', " + count_homes + ", " + count_warps + ", " + count_tickets + ")");
-		Database.addPlayer(this);
+	public void insert(NexusDatabase database) {
+		database.queue("INSERT INTO " + database.getSettings().getDatabasePlayerTableId() + " VALUES ('" + uuid + "', '" + name + "', '" + name_last + "', '" + ip + "', '" + nick + "', '" + channel + "', '" + Encoder.STRING_LIST(mails) + "', '" + Encoder.STRING_LIST(friends) + "', '" + Encoder.STRING_LIST(blocked) + "', " + mode_god + ", " + mode_fly + ", " + mode_spy + ", " + mode_invisible + ", " + mode_teleportable + ", " + time_joined + ", " + time_online + ", " + time_login + ", " + time_logout + ", '" + Encoder.LOCATION(location_death) + "', '" + Encoder.LOCATION(location_logout) + "', " + count_homes + ", " + count_warps + ", " + count_tickets + ")");
+		database.getCache().addPlayer(this);
 	}
 	
-	public void update() {
-		if(pendingDatabaseUpdates.hasUpdates()) Database.queue("UPDATE " + Database.TABLE_ID_PLAYER + " SET " + pendingDatabaseUpdates.getSQLString() + " WHERE uuid = '" + uuid + "'");
-		Database.addPlayer(this);
+	public void update(NexusDatabase database) {
+		if(pendingDatabaseUpdates.hasUpdates()) database.queue("UPDATE " + database.getSettings().getDatabasePlayerTableId() + " SET " + pendingDatabaseUpdates.getSQLString() + " WHERE uuid = '" + uuid + "'");
+		database.getCache().addPlayer(this);
 	}
 	
-	public void delete() {
-		Database.queue("DELETE FROM " + Database.TABLE_ID_PLAYER + " WHERE uuid = '" + uuid + "'");
-		Database.removePlayer(this);
+	public void delete(NexusDatabase database) {
+		database.queue("DELETE FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE uuid = '" + uuid + "'");
+		database.getCache().addPlayer(this);
 	}
 	
-	public void quit() {
-		Database.removePlayer(this);
+	public void quit(NexusDatabase database) {
+		database.getCache().removePlayer(this);
+	}
+	
+	public static NexusPlayer fromDatabase(NexusDatabase database, Player player) {
+		
+		String uuid = player.getUniqueId().toString();
+		
+		if(database.getCache().containsPlayer(uuid)) return database.getCache().getPlayer(uuid);
+		
+		NexusPlayer nexusPlayer = null;
+		
+		try {
+			
+			Connection connection = database.getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE uuid = '" + uuid + "'");
+			
+			if(!resultSet.isBeforeFirst()) return null;
+			
+			nexusPlayer = new NexusPlayer(resultSet);
+			
+			resultSet.close();
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(!database.getSettings().isProxy()) {
+			if(nexusPlayer != null && player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
+		}
+		
+		return nexusPlayer;
+		
+	}
+	
+	public static NexusPlayer fromDatabaseByUUID(NexusDatabase database, String uuid) {
+		
+		if(database.getCache().containsPlayer(uuid)) return database.getCache().getPlayer(uuid);
+		
+		NexusPlayer nexusPlayer = null;
+		
+		try {
+			
+			Connection connection = database.getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE uuid = '" + uuid + "'");
+			
+			if(!resultSet.isBeforeFirst()) return null;
+			
+			nexusPlayer = new NexusPlayer(resultSet);
+			
+			resultSet.close();
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(!database.getSettings().isProxy()) {
+			Player player = Bukkit.getPlayer(UUID.fromString(uuid));
+			if(nexusPlayer != null && player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
+		}
+		
+		return nexusPlayer;
+		
+	}
+	
+	public static NexusPlayer fromDatabaseByName(NexusDatabase database, String name) {
+		
+		if(database.getCache().containsPlayer(name)) return database.getCache().getPlayer(name);
+		
+		NexusPlayer nexusPlayer = null;
+		
+		try {
+			
+			Connection connection = database.getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE name = '" + name + "'");
+			
+			if(!resultSet.isBeforeFirst()) return null;
+			
+			nexusPlayer = new NexusPlayer(resultSet);
+			
+			resultSet.close();
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(!database.getSettings().isProxy()) {
+			Player player = Bukkit.getPlayer(UUID.fromString(nexusPlayer.getUUID()));
+			if(nexusPlayer != null && player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
+		}
+		
+		return nexusPlayer;
+		
 	}
 	
 }

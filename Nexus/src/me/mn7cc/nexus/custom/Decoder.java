@@ -1,4 +1,4 @@
-package me.mn7cc.nexus;
+package me.mn7cc.nexus.custom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import me.mn7cc.nexus.custom.AccessList;
 import me.mn7cc.nexus.util.Base64Utils;
 import me.mn7cc.nexus.util.StringUtils;
 

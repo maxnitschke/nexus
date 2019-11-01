@@ -1,9 +1,9 @@
 package me.mn7cc.nexus.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import me.mn7cc.nexus.Nexus;
 import me.mn7cc.nexus.custom.Log;
 
 import net.milkbowl.vault.chat.Chat;
@@ -22,8 +22,7 @@ public class VaultUtils {
 	
 	public static void setupVault() {
 		
-		Plugin nexus = Nexus.getPlugin();
-		Plugin vault = nexus.getServer().getPluginManager().getPlugin("Vault");
+		Plugin vault = Bukkit.getServer().getPluginManager().getPlugin("Vault");
 		
 		if(vault == null) {
 			Log.INFO("Error while hooking into Vault: Plugin not found!");
@@ -31,7 +30,7 @@ public class VaultUtils {
 		}
 		
 		
-        RegisteredServiceProvider<Economy> economyProvider = nexus.getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider == null) {
         	Log.INFO("Error while hooking into Vault: Invalid economy provider!");
             return;
@@ -39,7 +38,7 @@ public class VaultUtils {
         
         economy = economyProvider.getProvider();
         
-        RegisteredServiceProvider<Permission> permissionsProvider = nexus.getServer().getServicesManager().getRegistration(Permission.class);
+        RegisteredServiceProvider<Permission> permissionsProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionsProvider == null) {
         	Log.INFO("Error while hooking into Vault: Invalid permissions provider!");
             return;
@@ -47,7 +46,7 @@ public class VaultUtils {
         
         permission = permissionsProvider.getProvider();
         
-        RegisteredServiceProvider<Chat> chatProvider = nexus.getServer().getServicesManager().getRegistration(Chat.class);
+        RegisteredServiceProvider<Chat> chatProvider = Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
         if (chatProvider == null) {
         	Log.INFO("Error while hooking into Vault: Invalid chat provider!");
             return;

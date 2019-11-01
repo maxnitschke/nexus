@@ -11,18 +11,18 @@ public class NexusWarpTeleportEvent extends Event implements Cancellable {
 
 	private static final HandlerList HANDLERS = new HandlerList();
 	
-	private Player player;
 	private NexusWarp nexusWarp;
+	private Player player;
 	private boolean cancelled;
 	
-	public NexusWarpTeleportEvent(Player player, NexusWarp nexusWarp) {
-		this.player = player;
+	public NexusWarpTeleportEvent(NexusWarp nexusWarp, Player player) {
 		this.nexusWarp = nexusWarp;
+		this.player = player;
 		this.cancelled = false;
 	}
 	
-	public Player getPlayer() { return player; }
 	public NexusWarp getWarp() { return nexusWarp; }
+	public Player getPlayer() { return player; }
 	
 	@Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled; }
 	@Override public boolean isCancelled() { return cancelled; }

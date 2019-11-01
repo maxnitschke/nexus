@@ -3,10 +3,12 @@ package me.mn7cc.nexus.file;
 import java.io.File;
 import java.util.LinkedHashMap;
 
+import me.mn7cc.nexus.NexusFileManager;
+
 public class ModulesFile extends BaseFile {
 	
-	public ModulesFile() {
-		super(getBaseResource(), getBaseFile(), getBaseDefaults());
+	public ModulesFile(NexusFileManager fileManager) {
+		super(fileManager, getBaseResource(), getBaseFile(), getBaseDefaults());
 	}
 	
 	private static String getBaseResource() {
