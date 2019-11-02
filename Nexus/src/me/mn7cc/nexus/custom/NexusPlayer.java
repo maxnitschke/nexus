@@ -206,10 +206,10 @@ public class NexusPlayer {
 	public int getHomeLimit() {
 		
 		int limit = 1;
-		
 		if(session == null) return limit;
 		
 		Player player = session.getPlayer();
+		if(player.hasPermission("nexus.home.set.unlimited")) return Integer.MAX_VALUE;
 		
 		for(PermissionAttachmentInfo permissionAttachmentInfo : player.getEffectivePermissions()) {
 
@@ -230,10 +230,10 @@ public class NexusPlayer {
 	public int getWarpLimit() {
 		
 		int limit = 1;
-		
 		if(session == null) return limit;
 		
 		Player player = session.getPlayer();
+		if(player.hasPermission("nexus.warp.set.unlimited")) return Integer.MAX_VALUE;
 		
 		for(PermissionAttachmentInfo permissionAttachmentInfo : player.getEffectivePermissions()) {
 
@@ -254,10 +254,10 @@ public class NexusPlayer {
 	public int getTicketLimit() {
 		
 		int limit = 1;
-		
 		if(session == null) return limit;
 		
 		Player player = session.getPlayer();
+		if(player.hasPermission("nexus.ticket.unlimited")) return Integer.MAX_VALUE;
 		
 		for(PermissionAttachmentInfo permissionAttachmentInfo : player.getEffectivePermissions()) {
 
@@ -319,9 +319,7 @@ public class NexusPlayer {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE uuid = '" + uuid + "'");
 			
-			if(!resultSet.isBeforeFirst()) return null;
-			
-			nexusPlayer = new NexusPlayer(resultSet);
+			if(resultSet.isBeforeFirst()) nexusPlayer = new NexusPlayer(resultSet);
 			
 			resultSet.close();
 			statement.close();
@@ -331,8 +329,8 @@ public class NexusPlayer {
 			e.printStackTrace();
 		}
 		
-		if(!database.getSettings().isProxy()) {
-			if(nexusPlayer != null && player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
+		if(nexusPlayer != null && !database.getSettings().isProxy()) {
+			if(player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
 		}
 		
 		return nexusPlayer;
@@ -351,9 +349,7 @@ public class NexusPlayer {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE uuid = '" + uuid + "'");
 			
-			if(!resultSet.isBeforeFirst()) return null;
-			
-			nexusPlayer = new NexusPlayer(resultSet);
+			if(resultSet.isBeforeFirst()) nexusPlayer = new NexusPlayer(resultSet);
 			
 			resultSet.close();
 			statement.close();
@@ -363,9 +359,9 @@ public class NexusPlayer {
 			e.printStackTrace();
 		}
 		
-		if(!database.getSettings().isProxy()) {
+		if(nexusPlayer != null && !database.getSettings().isProxy()) {
 			Player player = Bukkit.getPlayer(UUID.fromString(uuid));
-			if(nexusPlayer != null && player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
+			if(player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
 		}
 		
 		return nexusPlayer;
@@ -384,9 +380,7 @@ public class NexusPlayer {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabasePlayerTableId() + " WHERE name = '" + name + "'");
 			
-			if(!resultSet.isBeforeFirst()) return null;
-			
-			nexusPlayer = new NexusPlayer(resultSet);
+			if(resultSet.isBeforeFirst()) nexusPlayer = new NexusPlayer(resultSet);
 			
 			resultSet.close();
 			statement.close();
@@ -396,9 +390,9 @@ public class NexusPlayer {
 			e.printStackTrace();
 		}
 		
-		if(!database.getSettings().isProxy()) {
+		if(nexusPlayer != null && !database.getSettings().isProxy()) {
 			Player player = Bukkit.getPlayer(UUID.fromString(nexusPlayer.getUUID()));
-			if(nexusPlayer != null && player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
+			if(player != null && player.isOnline()) database.getCache().addPlayer(nexusPlayer);
 		}
 		
 		return nexusPlayer;

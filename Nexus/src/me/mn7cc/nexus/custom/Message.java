@@ -59,10 +59,10 @@ public enum Message {
 	WARP_MEMBER_LIMIT_REACHED("&c&l! &7You cannot add more than &f{0} &7members."),
 	WARP_MEMBER_REMOVED("&c&l! &f{0} &7has been removed from &f{1}&7."),
 	WARP_MESSAGE_CUSTOM("&c&l! &f{0}"),
-	WARP_MESSAGE_DEFAULT("&c&l! &7Warped to &f{0}&7."),
+	WARP_MESSAGE_DEFAULT("&c&l! &7Teleported to &f{0}&7."),
 	WARP_MOVED("&c&l! &7Warp &f{0} &7has been moved."),
 	WARP_SET("&c&l! &7Warp &f{0} &7has been set."),
-	WARP_TELEPORT_OTHERS("&c&l! &7Warped &f{0} &7to &f{1}&7."),
+	WARP_TELEPORT_OTHERS("&c&l! &7Teleported &f{0} &7to &f{1}&7."),
 	WARP_TRANSFERRED_OWNERSHIP("&c&l! &7Ownership of &f{0} &7has been transferred to &f{1}&7."),
 	WARP_UNBANNED("&c&l! &f{0} &7has been unbanned from &f{0}&7."),
 	WARP_UNINVITED("&c&l! &f{0} &7has been uninvited from &f{1}&7.");

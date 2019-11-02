@@ -4,8 +4,13 @@ public class NexusCommandException extends Exception {
 
 	private static final long serialVersionUID = -2090039187058265669L;
 
-	public NexusCommandException(String message) {
+	private boolean showUsage;
+	
+	public NexusCommandException(String message, boolean showUsage) {
 		super(message);
+		this.showUsage = showUsage;
 	}
+	
+	public boolean showUsage() { return showUsage; }
 	
 }

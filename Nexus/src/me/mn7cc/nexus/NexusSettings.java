@@ -57,11 +57,8 @@ public class NexusSettings {
 		this.databaseMySQLUsername = configFile.getMySQLUsername();
 		this.databaseMySQLPassword = configFile.getMySQLPassword();
 		
-		try {
-			this.teleportRequestTimeout = TimeUtils.parseTime(modulesFile.getTeleportationTeleportRequestTimeout());
-			this.teleportDelay = TimeUtils.parseTime(modulesFile.getTeleportationTeleportDelay());
-		}
-		catch (InvalidTimeFormatException e) { e.printStackTrace(); }
+		this.teleportRequestTimeout = TimeUtils.parseTime(modulesFile.getTeleportationTeleportRequestTimeout());
+		this.teleportDelay = TimeUtils.parseTime(modulesFile.getTeleportationTeleportDelay());
 		
 	}
 	

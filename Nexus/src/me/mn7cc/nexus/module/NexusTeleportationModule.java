@@ -24,8 +24,8 @@ import me.mn7cc.nexus.custom.Message;
 
 public class NexusTeleportationModule extends NexusModule implements INexusModule, Listener {
 	
-	public NexusTeleportationModule(Nexus instance, boolean enabled) {
-		super(instance, enabled);
+	public NexusTeleportationModule(Nexus instance, boolean enabled, String name) {
+		super(instance, enabled, name);
 	}
 	
 	@Override

@@ -40,11 +40,11 @@ public class CommandContent {
 		this.usage = model.getUsage();
 		this.arguments = model.getArguments();
 		
-		if(requiresPlayer && sender instanceof Player == false) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_REQUIRES_PLAYER_AS_SENDER));
-		if(!sender.hasPermission(permission)) throw new NexusCommandException(MessageUtils.getMessage(Message.INSUFFICIENT_PERMISSIONS));
+		if(requiresPlayer && sender instanceof Player == false) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_REQUIRES_PLAYER_AS_SENDER), false);
+		if(!sender.hasPermission(permission)) throw new NexusCommandException(MessageUtils.getMessage(Message.INSUFFICIENT_PERMISSIONS), false);
 		
 		int minimumLength = 0; for(Argument argument : this.arguments.values()) if(!argument.isOptional()) minimumLength++;
-		if(args.length < minimumLength) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_TOO_FEW_ARGUMENTS));
+		if(args.length < minimumLength) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_TOO_FEW_ARGUMENTS), true);
 		
 		boolean reachedOptional = false;
 		boolean reachedAcceptsRemaining = false;
@@ -59,7 +59,7 @@ public class CommandContent {
 			
 			if(args.length < index + 1) {
 				if(argument.isOptional()) continue;
-				else throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_TOO_FEW_ARGUMENTS));
+				else throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_TOO_FEW_ARGUMENTS), true);
 			}
 			
 			if(reachedAcceptsRemaining || (reachedOptional && !argument.isOptional())) throw new InvalidCommandModelException();
@@ -89,7 +89,7 @@ public class CommandContent {
 			
 		}
 		
-		if(!reachedAcceptsRemaining && args.length > lastIndex + 2) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_TOO_MANY_ARGUMENTS));
+		if(!reachedAcceptsRemaining && args.length > lastIndex + 2) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_TOO_MANY_ARGUMENTS), true);
 		
 	}
 	

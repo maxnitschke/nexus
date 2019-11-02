@@ -25,14 +25,14 @@ public class VaultUtils {
 		Plugin vault = Bukkit.getServer().getPluginManager().getPlugin("Vault");
 		
 		if(vault == null) {
-			Log.INFO("Error while hooking into Vault: Plugin not found!");
+			Log.INFO("&7Error while hooking into Vault: Plugin not found!");
 			return;
 		}
 		
 		
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider == null) {
-        	Log.INFO("Error while hooking into Vault: Invalid economy provider!");
+        	Log.INFO("&7Error while hooking into Vault: Invalid economy provider!");
             return;
         }
         
@@ -40,7 +40,7 @@ public class VaultUtils {
         
         RegisteredServiceProvider<Permission> permissionsProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionsProvider == null) {
-        	Log.INFO("Error while hooking into Vault: Invalid permissions provider!");
+        	Log.INFO("&7Error while hooking into Vault: Invalid permissions provider!");
             return;
         }
         
@@ -48,13 +48,13 @@ public class VaultUtils {
         
         RegisteredServiceProvider<Chat> chatProvider = Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
         if (chatProvider == null) {
-        	Log.INFO("Error while hooking into Vault: Invalid chat provider!");
+        	Log.INFO("&7Error while hooking into Vault: Invalid chat provider!");
             return;
         }
         
         chat = chatProvider.getProvider();
         
-        Log.INFO("Successfully hooked into Vault! (Version: " + vault.getDescription().getVersion() + ")");
+        Log.INFO("&7Successfully hooked into Vault! (Version: " + vault.getDescription().getVersion() + ")");
 		
 	}
 

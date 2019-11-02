@@ -23,9 +23,10 @@ public class ModulesFile extends BaseFile {
 		
 		LinkedHashMap<String, Object> defaults = new LinkedHashMap<String, Object>();
 		
-		defaults.put("modules.teleportation.enable", false);
+		defaults.put("modules.teleportation.enable", true);
 		defaults.put("modules.teleportation.settings.teleport-request-timeout", "2m");
 		defaults.put("modules.teleportation.settings.teleport-delay", "0s");
+		defaults.put("modules.warps.enable", true);
 		
 		return defaults;
 		

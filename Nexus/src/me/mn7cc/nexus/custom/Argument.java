@@ -71,14 +71,14 @@ public class Argument extends ArgumentData {
 		}
 		else if(requiredType == Type.DOUBLE) {
 			
-			if(!StringUtils.isDouble(givenArgument)) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER, label));
+			if(!StringUtils.isDouble(givenArgument)) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER, label), true);
 			setDouble(StringUtils.parseDouble(givenArgument));
 			return;
 			
 		}
 		else if(requiredType == Type.INTEGER) {
 			
-			if(!StringUtils.isInteger(givenArgument)) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER, label));
+			if(!StringUtils.isInteger(givenArgument)) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_ARGUMENT_REQUIRES_A_NUMBER, label), true);
 			setInteger(StringUtils.parseInteger(givenArgument));
 			return;
 			
@@ -86,7 +86,7 @@ public class Argument extends ArgumentData {
 		else if(requiredType == Type.PLAYER) {
 			
 			Player player = ServerUtils.getPlayer(givenArgument);
-			if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+			if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND), true);
 			setPlayer(player);
 			return;
 			
@@ -101,13 +101,13 @@ public class Argument extends ArgumentData {
 			else if(givenArgument.contains(",")) {
 				for(String name : givenArgument.split(",")) {
 					Player player = ServerUtils.getPlayer(name);
-					if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+					if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND), true);
 					if(!players.contains(player)) players.add(player);
 				}
 			}
 			else {
 				Player player = ServerUtils.getPlayer(givenArgument);
-				if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+				if(player == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND), true);
 				players.add(player);
 			}
 			
@@ -118,7 +118,7 @@ public class Argument extends ArgumentData {
 		else if(requiredType == Type.NEXUS_PLAYER) {
 			
 			NexusPlayer nexusPlayer = NexusPlayer.fromDatabaseByName(database, givenArgument);
-			if(nexusPlayer == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND));
+			if(nexusPlayer == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_PLAYER_NOT_FOUND), true);
 			setNexusPlayer(nexusPlayer);
 			return;
 			
@@ -126,7 +126,7 @@ public class Argument extends ArgumentData {
 		else if(requiredType == Type.NEXUS_WARP) {
 			
 			NexusWarp nexusWarp = NexusWarp.fromDatabase(database, givenArgument);
-			if(nexusWarp == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_WARP_NOT_FOUND));
+			if(nexusWarp == null) throw new NexusCommandException(MessageUtils.getMessage(Message.COMMAND_ERROR_WARP_NOT_FOUND), true);
 			setNexusWarp(nexusWarp);
 			return;
 			

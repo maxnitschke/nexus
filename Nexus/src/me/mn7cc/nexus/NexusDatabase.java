@@ -11,10 +11,6 @@ import java.util.List;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-import me.mn7cc.nexus.custom.AccessList;
-import me.mn7cc.nexus.custom.Decoder;
-import me.mn7cc.nexus.custom.NexusWarp;
-
 public class NexusDatabase {
 	
 	private NexusSettings settings;
@@ -60,7 +56,7 @@ public class NexusDatabase {
 			
 			List<String> updates = new ArrayList<String>();
 			
-			if(!tables.contains(settings.getDatabasePlayerTableId())) updates.add("CREATE TABLE " + settings.getDatabasePlayerTableId() + " (uuid TEXT, name TEXT, name_last TEXT, ip TEXT, nick TEXT, channel TEXT, friends TEXT, blocked TEXT, mode_god DOUBLE, mode_fly DOUBLE, mode_spy DOUBLE, mode_invisible DOUBLE, mode_teleportable DOUBLE, time_joined DOUBLE, time_online DOUBLE, time_login DOUBLE, time_logout DOUBLE, location_death TEXT, location_logout TEXT, count_homes INT, count_warps INT, count_tickets INT)");
+			if(!tables.contains(settings.getDatabasePlayerTableId())) updates.add("CREATE TABLE " + settings.getDatabasePlayerTableId() + " (uuid TEXT, name TEXT, name_last TEXT, ip TEXT, nick TEXT, channel TEXT, mails TEXT, friends TEXT, blocked TEXT, mode_god DOUBLE, mode_fly DOUBLE, mode_spy DOUBLE, mode_invisible DOUBLE, mode_teleportable DOUBLE, time_joined DOUBLE, time_online DOUBLE, time_login DOUBLE, time_logout DOUBLE, location_death TEXT, location_logout TEXT, count_homes INT, count_warps INT, count_tickets INT)");
 			else {
 				
 				/*
@@ -70,7 +66,7 @@ public class NexusDatabase {
 				
 			}
 			
-			if(!tables.contains(settings.getDatabaseWarpTableId())) updates.add("CREATE TABLE " + settings.getDatabaseWarpTableId() + " (id TEXT, server TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT, owner TEXT, priv BOOLEAN, invited TEXT, banned TEXT, message TEXT)");
+			if(!tables.contains(settings.getDatabaseWarpTableId())) updates.add("CREATE TABLE " + settings.getDatabaseWarpTableId() + " (id TEXT, server TEXT, world TEXT, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT, owner TEXT, members TEXT, priv BOOLEAN, invited TEXT, banned TEXT, message TEXT)");
 			else {
 				
 				/*

@@ -32,8 +32,8 @@ import me.mn7cc.nexus.custom.Message;
 
 public class NexusWarpsModule extends NexusModule implements INexusModule, Listener {
 	
-	public NexusWarpsModule(Nexus instance, boolean enabled) {
-		super(instance, enabled);
+	public NexusWarpsModule(Nexus instance, boolean enabled, String name) {
+		super(instance, enabled, name);
 	}
 	
 	@Override
@@ -155,7 +155,7 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 		
 		public CommandWarpDelete() {
 			super(true, "nexus.warp.delete", "/warp delete <id>",
-			new ArgumentModel(1, "<id>", Argument.Type.STRING));
+			new ArgumentModel(1, "<id>", Argument.Type.NEXUS_WARP));
 		}
 
 		@Override
@@ -163,26 +163,19 @@ public class NexusWarpsModule extends NexusModule implements INexusModule, Liste
 			
 			Nexus instance = getNexusInstance();
 			Player source = (Player) sender;
-			String id = content.getString(1).toLowerCase();
+			NexusWarp nexusWarp = content.getNexusWarp(1);
 			NexusPlayer nexusPlayer = NexusPlayer.fromDatabase(instance.getDatabase(), source);
 			int warpCount = nexusPlayer.getWarpCount();
 			
-			NexusWarp nexusWarp = NexusWarp.fromDatabase(instance.getDatabase(), id);
-			
-			if(nexusWarp == null) {
-				MessageUtils.send(sender, Message.COMMAND_ERROR_WARP_NOT_FOUND);
-				return;
-			}
-			
 			if(!nexusWarp.isOwner(source.getUniqueId().toString()) && !CommandUtils.hasPermission(sender, "nexus.warp.others", Message.INSUFFICIENT_PERMISSIONS_WARP_OTHERS)) return;
-			
+
 			if(EventUtils.isCancelled(new NexusWarpDeleteEvent(nexusWarp))) return;
 			
 			nexusWarp.delete(instance.getDatabase());
 			nexusPlayer.setWarpCount(warpCount - 1);
 			nexusPlayer.update(instance.getDatabase());
 			
-			MessageUtils.send(sender, Message.WARP_DELETED, id);
+			MessageUtils.send(sender, Message.WARP_DELETED, nexusWarp.getId());
 			
 		}
 

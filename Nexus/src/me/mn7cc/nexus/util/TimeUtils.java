@@ -101,7 +101,7 @@ public class TimeUtils {
 		
 	}
 	
-	public static double parseTime(String time) throws InvalidTimeFormatException {
+	public static double parseTime(String time) {
 		
 		Pattern pattern = Pattern.compile("([0-9]+y)|([0-9]+mo)|([0-9]+w)|([0-9]+d)|([0-9]+h)|([0-9]+m)|([0-9]+s)", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(time);
@@ -136,7 +136,6 @@ public class TimeUtils {
 		milliseconds += minutes * 1000 * 60;
 		milliseconds += seconds * 1000;
 		
-		if(milliseconds == 0) throw new InvalidTimeFormatException();
 		return milliseconds;
 		
 	}

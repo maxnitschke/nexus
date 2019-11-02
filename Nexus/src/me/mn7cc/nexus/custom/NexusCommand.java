@@ -11,6 +11,7 @@ import me.mn7cc.nexus.exception.NexusCommandException;
 import me.mn7cc.nexus.Nexus;
 import me.mn7cc.nexus.exception.InvalidCommandModelException;
 import me.mn7cc.nexus.util.MessageUtils;
+import me.mn7cc.nexus.util.StringUtils;
 
 public class NexusCommand extends Command {
 
@@ -28,6 +29,10 @@ public class NexusCommand extends Command {
 	
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
+		
+		double time = System.currentTimeMillis();
+		
+		Log.INFO("Running command: /" + label + "..");		
 		
 		INexusCommand command = getCommand(args);
 		
@@ -47,11 +52,13 @@ public class NexusCommand extends Command {
 		}
 		catch (NexusCommandException e) {
 			if(e.getMessage() != null && !e.getMessage().isEmpty()) MessageUtils.send(sender, e.getMessage());
-			MessageUtils.send(sender, Message.COMMAND_USAGE, model.getUsage());
+			if(e.showUsage()) MessageUtils.send(sender, Message.COMMAND_USAGE, model.getUsage());
 		}
 		catch (InvalidCommandModelException e) {
 			e.printStackTrace();
 		}
+		
+		Log.INFO("Command has been &asuccessfully executed&f! &8(&7" + StringUtils.toString(System.currentTimeMillis() - time) + "ms&8)");
 		
 		return true;
 		

@@ -195,7 +195,7 @@ public class NexusWarp {
 	}
 	
 	public void insert(NexusDatabase database) {
-		database.queue("INSERT INTO " + database.getSettings().getDatabaseWarpTableId() + " VALUES ('" + id + "', '" + server + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', priv, '" + Encoder.ACCESS_LIST(invited) + "', '" + Encoder.ACCESS_LIST(banned) + "', '" + message + "')");
+		database.queue("INSERT INTO " + database.getSettings().getDatabaseWarpTableId() + " VALUES ('" + id + "', '" + server + "', '" + world + "', " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ", '" + owner + "', '" + Encoder.STRING_LIST(members) + "', " +  priv + ", '" + Encoder.ACCESS_LIST(invited) + "', '" + Encoder.ACCESS_LIST(banned) + "', '" + message + "')");
 		database.getCache().addWarp(this);
 	}
 	
@@ -221,9 +221,7 @@ public class NexusWarp {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + database.getSettings().getDatabaseWarpTableId() + " WHERE id = '" + id + "'");
 			
-			if(!resultSet.isBeforeFirst()) return null;
-			
-			nexusWarp = new NexusWarp(resultSet);
+			if(resultSet.isBeforeFirst()) nexusWarp = new NexusWarp(resultSet);
 			
 			resultSet.close();
 			statement.close();
@@ -233,7 +231,7 @@ public class NexusWarp {
 			e.printStackTrace();
 		}
 		
-		if(!database.getSettings().isProxy()) database.getCache().addWarp(nexusWarp);
+		if(nexusWarp != null && !database.getSettings().isProxy()) database.getCache().addWarp(nexusWarp);
 		
 		return nexusWarp;
 		
