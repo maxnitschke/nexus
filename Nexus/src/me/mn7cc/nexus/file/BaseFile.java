@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -66,6 +67,10 @@ public class BaseFile {
 	
 	public List<String> getStringListValue(String path) {
 		return data.contains(path) ? data.getStringList(path) : new ArrayList<String>();
+	}
+	
+	public ConfigurationSection getConfigurationSection(String path) {
+		return data.contains(path) ? data.getConfigurationSection(path) : null;
 	}
 	
 	public boolean containsValue(String path) {

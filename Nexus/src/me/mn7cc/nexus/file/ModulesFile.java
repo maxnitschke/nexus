@@ -16,7 +16,7 @@ public class ModulesFile extends BaseFile {
 	}
 	
 	private static File getBaseFile() {
-		return new File("plugins/Nexus/modules.yml");
+		return new File("plugins/Nexus/config/modules.yml");
 	}
 	
 	private static LinkedHashMap<String, Object> getBaseDefaults() {

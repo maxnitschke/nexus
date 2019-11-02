@@ -16,7 +16,7 @@ public class ConfigFile extends BaseFile {
 	}
 	
 	private static File getBaseFile() {
-		return new File("plugins/Nexus/config.yml");
+		return new File("plugins/Nexus/config/config.yml");
 	}
 	
 	private static LinkedHashMap<String, Object> getBaseDefaults() {

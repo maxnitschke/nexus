@@ -7,8 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.mn7cc.nexus.custom.Log;
-import me.mn7cc.nexus.custom.NexusModule;
 import me.mn7cc.nexus.listener.AsyncPlayerChatListener;
+import me.mn7cc.nexus.listener.PlayerCommandPreprocessListener;
 import me.mn7cc.nexus.listener.PlayerJoinListener;
 import me.mn7cc.nexus.listener.PlayerKickListener;
 import me.mn7cc.nexus.listener.PlayerQuitListener;
@@ -45,18 +45,19 @@ public class Nexus extends JavaPlugin {
 		
 		MessageUtils.loadMessages(fileManager.getMessagesFile());
 		
-		commandManager = new NexusCommandManager();
+		settings = new NexusSettings(false, this);
+		
+		commandManager = new NexusCommandManager(settings);
 		commandManager.loadCommands();
 		
 		moduleManager = new NexusModuleManager(this, fileManager.getModulesFile());
 		moduleManager.loadModules();
 		
 		Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new PlayerCommandPreprocessListener(this), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerKickListener(this), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
-		
-		settings = new NexusSettings(false, this);
 		
 		database = new NexusDatabase(settings);
 		database.load();

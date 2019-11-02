@@ -10,9 +10,12 @@ import me.mn7cc.nexus.custom.NexusCommand;
 
 public class NexusCommandManager {
 
+	private NexusSettings settings;
 	private CommandMap commandMap;
 	
-	public NexusCommandManager() {
+	public NexusCommandManager(NexusSettings settings) {
+		
+		this.settings = settings;
 		
         try {
             
@@ -37,7 +40,7 @@ public class NexusCommandManager {
 	}
 	
 	public void registerCommand(NexusCommand command) {
-		commandMap.register(command.getLabel().toLowerCase(), command);
+		if(!settings.getDisabledCommands().contains(command.getLabel().toLowerCase())) commandMap.register(command.getLabel().toLowerCase(), command);
 	}
 	
 	public void loadCommands() {

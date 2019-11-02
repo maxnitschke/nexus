@@ -1,6 +1,10 @@
 package me.mn7cc.nexus;
 
-import me.mn7cc.nexus.exception.InvalidTimeFormatException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
+import me.mn7cc.nexus.file.CommandsFile;
 import me.mn7cc.nexus.file.ConfigFile;
 import me.mn7cc.nexus.file.ModulesFile;
 import me.mn7cc.nexus.util.TimeUtils;
@@ -31,10 +35,14 @@ public class NexusSettings {
 	private double teleportRequestTimeout;
 	private double teleportDelay;
 	
+	private HashMap<String, List<String>> commandAliases;
+	private List<String> disabledCommands;
+	
 	public NexusSettings(boolean isProxy, Nexus instance) {
 		
 		ConfigFile configFile = instance.getFileManager().getConfigFile();
 		ModulesFile modulesFile = instance.getFileManager().getModulesFile();
+		CommandsFile commandsFile = instance.getFileManager().getCommandsFile();
 		
 		this.isProxy = isProxy;
 		this.serverId = configFile.getServerId();
@@ -59,6 +67,9 @@ public class NexusSettings {
 		
 		this.teleportRequestTimeout = TimeUtils.parseTime(modulesFile.getTeleportationTeleportRequestTimeout());
 		this.teleportDelay = TimeUtils.parseTime(modulesFile.getTeleportationTeleportDelay());
+		
+		this.commandAliases = commandsFile.getAliases();
+		this.disabledCommands = commandsFile.getDisabledCommands();
 		
 	}
 	
@@ -85,5 +96,8 @@ public class NexusSettings {
 	
 	public double getTeleportRequestTimeout() { return teleportRequestTimeout; }
 	public double getTeleportDelay() { return teleportDelay; }
+	
+	public HashMap<String, List<String>> getCommandAliases() { return commandAliases; }
+	public List<String> getDisabledCommands() { return disabledCommands; }
 	
 }

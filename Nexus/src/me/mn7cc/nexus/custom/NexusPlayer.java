@@ -207,7 +207,6 @@ public class NexusPlayer {
 		
 		int limit = 1;
 		if(session == null) return limit;
-		
 		Player player = session.getPlayer();
 		if(player.hasPermission("nexus.home.set.unlimited")) return Integer.MAX_VALUE;
 		
@@ -231,7 +230,6 @@ public class NexusPlayer {
 		
 		int limit = 1;
 		if(session == null) return limit;
-		
 		Player player = session.getPlayer();
 		if(player.hasPermission("nexus.warp.set.unlimited")) return Integer.MAX_VALUE;
 		
@@ -255,7 +253,6 @@ public class NexusPlayer {
 		
 		int limit = 1;
 		if(session == null) return limit;
-		
 		Player player = session.getPlayer();
 		if(player.hasPermission("nexus.ticket.unlimited")) return Integer.MAX_VALUE;
 		

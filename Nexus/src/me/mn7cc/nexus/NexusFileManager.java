@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import me.mn7cc.nexus.file.CommandsFile;
 import me.mn7cc.nexus.file.ConfigFile;
 import me.mn7cc.nexus.file.MessagesFile;
 import me.mn7cc.nexus.file.ModulesFile;
@@ -15,6 +16,7 @@ public class NexusFileManager {
 	private Nexus instance;
 	private ConfigFile config;
 	private ModulesFile modules;
+	private CommandsFile commands;
 	private MessagesFile messages;
 	
 	public NexusFileManager(Nexus instance) {
@@ -25,6 +27,7 @@ public class NexusFileManager {
 		
 		config = new ConfigFile(this);
 		modules = new ModulesFile(this);
+		commands = new CommandsFile(this);
 		messages = new MessagesFile(this);
 		
 	}
@@ -33,12 +36,14 @@ public class NexusFileManager {
 		
 		config.reloadData();
 		modules.reloadData();
+		commands.reloadData();
 		messages.reloadData();
 		
 	}
 	
 	public ConfigFile getConfigFile() { return config; }
 	public ModulesFile getModulesFile() { return modules; }
+	public CommandsFile getCommandsFile() { return commands; }
 	public MessagesFile getMessagesFile() { return messages; }
 	
 	public void copyFile(String resource, File file) {

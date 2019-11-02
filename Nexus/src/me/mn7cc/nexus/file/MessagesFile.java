@@ -19,7 +19,7 @@ public class MessagesFile extends BaseFile {
 	}
 	
 	private static File getBaseFile() {
-		return new File("plugins/Nexus/messages.yml");
+		return new File("plugins/Nexus/config/messages.yml");
 	}
 	
 	private static LinkedHashMap<String, Object> getBaseDefaults() {
